@@ -349,22 +349,6 @@
                             <option value="18">18 UTC (02:00 WITA)</option>
                         </select>
                     </div>
-
-                    <!-- Berat Balon -->
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Jenis / Berat Balon</label>
-                        <select id="balloon-weight" onchange="updateAscentRateByBalloon()" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-medium text-white focus:outline-none focus:border-sky-500">
-                            <option value="30">Balon 30 Gram</option>
-                            <option value="100">Balon 100 Gram</option>
-                            <option value="custom">Kustom Ascent Rate</option>
-                        </select>
-                    </div>
-
-                    <!-- Ascent Rate -->
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Laju Naik (m/menit)</label>
-                        <input type="number" id="ascent-rate" value="150" step="5" min="50" max="500" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-mono font-bold text-amber-400 focus:outline-none focus:border-sky-500">
-                    </div>
                 </div>
 
                 <!-- Surface Wind (Menit ke-0) -->
@@ -831,10 +815,12 @@
         let currentInputs = { azimuth: '', elevation: '' };
 
         let sensorActive = false;
+        let lockedSensorSource = null; // Lock to one reliable sensor stream to prevent conflict on Samsung
         let rawSensor = { az: 0, pitch: 0, roll: 0 };
         let offsetSensor = { az: 0, pitch: 0, roll: 0 };
         let smoothedSensor = { az: 0, el: 0, pitch: 0, roll: 0 };
-        const SMOOTHING_ALPHA = 0.25;
+        const SMOOTHING_ALPHA = 0.15; // Stronger damping for noisy mobile MEMS sensors
+        const STANDARD_ASCENT_RATE = 150; // Standar operasional 150 m/menit
 
         window.onload = function() {
             initPWA();
@@ -850,81 +836,67 @@
         };
 
         // =========================================================================
-        // 3. OUTDOOR DAYLIGHT / NIGHT THEME TOGGLE
+        // 3. DAYLIGHT / NIGHT THEME & SCREEN WAKE LOCK
         // =========================================================================
         function initTheme() {
-            const savedTheme = localStorage.getItem('pibal_rm_theme') || 'light';
+            const savedTheme = localStorage.getItem('pibal_rm_bima_theme') || 'light';
             applyTheme(savedTheme);
         }
 
         function toggleOutdoorTheme() {
             const isDark = document.documentElement.classList.contains('dark');
             const nextTheme = isDark ? 'light' : 'dark';
-            localStorage.setItem('pibal_rm_theme', nextTheme);
+            localStorage.setItem('pibal_rm_bima_theme', nextTheme);
             applyTheme(nextTheme);
-            showToast(nextTheme === 'light' ? 'Mode Siang Outdoor Aktif (Kontras Tinggi)' : 'Mode Malam Aktif', 'info');
+            drawWindProfileChart();
         }
 
         function applyTheme(theme) {
             const htmlEl = document.documentElement;
             const iconEl = document.getElementById('theme-toggle-icon');
             const metaTheme = document.querySelector('meta[name="theme-color"]');
+
             if (theme === 'dark') {
                 htmlEl.classList.add('dark');
-                if (iconEl) iconEl.className = 'fa-solid fa-moon text-xs';
+                if (iconEl) iconEl.className = 'fa-solid fa-moon text-xs text-sky-400';
                 if (metaTheme) metaTheme.setAttribute('content', '#0b1528');
             } else {
                 htmlEl.classList.remove('dark');
-                if (iconEl) iconEl.className = 'fa-solid fa-sun text-xs';
+                if (iconEl) iconEl.className = 'fa-solid fa-sun text-xs text-amber-500';
                 if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
-            }
-            if (document.getElementById('tab-report') && !document.getElementById('tab-report').classList.contains('hidden')) {
-                drawWindProfileChart();
             }
         }
 
-        // =========================================================================
-        // 4. SCREEN WAKE LOCK API (PREVENT SCREEN SLEEP)
-        // =========================================================================
-        async function requestScreenWakeLock(showNotification = false) {
-            if (!('wakeLock' in navigator)) {
-                updateWakeLockUI(false, 'N/A');
-                return;
-            }
+        async function requestScreenWakeLock(showNotification = true) {
+            if (!keepAwakeDesired) return;
             try {
-                wakeLockSentinel = await navigator.wakeLock.request('screen');
-                updateWakeLockUI(true);
-                if (showNotification) showToast('Layar dikunci agar tetap menyala.', 'success');
-
-                wakeLockSentinel.addEventListener('release', () => {
-                    updateWakeLockUI(false);
-                });
-            } catch (err) {
+                if ('wakeLock' in navigator) {
+                    wakeLockSentinel = await navigator.wakeLock.request('screen');
+                    updateWakeLockUI(true);
+                    wakeLockSentinel.addEventListener('release', () => {
+                        updateWakeLockUI(false);
+                    });
+                    if (showNotification) showToast('Layar dikunci agar tetap menyala.', 'success');
+                }
+            } catch (e) {
                 updateWakeLockUI(false);
             }
         }
 
-        async function releaseScreenWakeLock() {
-            if (wakeLockSentinel) {
-                try {
-                    await wakeLockSentinel.release();
-                    wakeLockSentinel = null;
-                } catch (e) {}
-            }
-            updateWakeLockUI(false);
-        }
-
         async function toggleWakeLockManual() {
-            keepAwakeDesired = !keepAwakeDesired;
-            if (keepAwakeDesired) {
-                await requestScreenWakeLock(true);
+            if (wakeLockSentinel) {
+                keepAwakeDesired = false;
+                await wakeLockSentinel.release();
+                wakeLockSentinel = null;
+                updateWakeLockUI(false);
+                showToast('Kunci layar dimatikan.', 'info');
             } else {
-                await releaseScreenWakeLock();
-                showToast('Kunci layar dimatikan (ikuti pengaturan HP).', 'info');
+                keepAwakeDesired = true;
+                await requestScreenWakeLock(true);
             }
         }
 
-        function updateWakeLockUI(isActive, customLabel = null) {
+        function updateWakeLockUI(isActive) {
             const badge = document.getElementById('wakelock-badge');
             const dot = document.getElementById('wakelock-dot');
             const text = document.getElementById('wakelock-text');
@@ -933,13 +905,13 @@
             if (isActive) {
                 badge.className = 'h-8 px-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center gap-1.5 transition';
                 dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
-                text.className = 'text-[10px] font-extrabold text-amber-400 tracking-wide';
                 text.textContent = 'ON';
+                text.className = 'text-[10px] font-extrabold text-amber-400 tracking-wide';
             } else {
-                badge.className = 'h-8 px-2.5 rounded-xl bg-navy-950 border border-slate-800 flex items-center gap-1.5 transition';
+                badge.className = 'h-8 px-2.5 rounded-xl bg-slate-800/50 border border-slate-700 flex items-center gap-1.5 transition';
                 dot.className = 'w-2 h-2 rounded-full bg-slate-500';
+                text.textContent = 'OFF';
                 text.className = 'text-[10px] font-bold text-slate-400 tracking-wide';
-                text.textContent = customLabel || 'OFF';
             }
         }
 
@@ -949,16 +921,8 @@
             }
         });
 
-        ['click', 'touchstart'].forEach(evt => {
-            document.addEventListener(evt, () => {
-                if (keepAwakeDesired && !wakeLockSentinel) {
-                    requestScreenWakeLock(false);
-                }
-            }, { passive: true });
-        });
-
         // =========================================================================
-        // 5. CLOCKS, DATE/TIME & TAB NAVIGATION
+        // 4. DATE, UTC/WITA CLOCKS & SYNOPTIC HOUR AUTO-DETECT
         // =========================================================================
         function initDateTime() {
             const now = new Date();
@@ -969,68 +933,77 @@
             if (dateInput && !dateInput.value) {
                 dateInput.value = `${yyyy}-${mm}-${dd}`;
             }
-            autoDetectSynoptic(true);
+            autoDetectSynoptic(false);
         }
 
-        function autoDetectSynoptic(silent = false) {
+        function autoDetectSynoptic(notify = true) {
             const now = new Date();
             const utcHour = now.getUTCHours();
-            let syn = '00';
-            if (utcHour >= 3 && utcHour < 9) syn = '06';
-            else if (utcHour >= 9 && utcHour < 15) syn = '12';
-            else if (utcHour >= 15 && utcHour < 21) syn = '18';
-            else syn = '00';
+            const synopticHours = [0, 6, 12, 18];
+            let nearest = 0;
+            let minDiff = 24;
+
+            synopticHours.forEach(h => {
+                let diff = Math.abs(utcHour - h);
+                if (diff > 12) diff = 24 - diff;
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    nearest = h;
+                }
+            });
 
             const hourSelect = document.getElementById('obs-hour');
-            if (hourSelect) hourSelect.value = syn;
-            saveToLocalStorage();
-            recalculateAll();
-            if (!silent) showToast(`Jam sinoptik otomatis diatur ke ${syn} UTC.`, 'info');
+            if (hourSelect) {
+                hourSelect.value = String(nearest).padStart(2, '0');
+                saveToLocalStorage();
+                recalculateAll();
+                if (notify) showToast(`Jam sinoptik otomatis diatur ke ${hourSelect.value} UTC.`, 'info');
+            }
         }
 
         function startClocks() {
-            const update = () => {
+            const updateClocks = () => {
                 const now = new Date();
-                const utcStr = [
-                    String(now.getUTCHours()).padStart(2, '0'),
-                    String(now.getUTCMinutes()).padStart(2, '0'),
-                    String(now.getUTCSeconds()).padStart(2, '0')
-                ].join(':');
+                const utcH = String(now.getUTCHours()).padStart(2, '0');
+                const utcM = String(now.getUTCMinutes()).padStart(2, '0');
+                const utcS = String(now.getUTCSeconds()).padStart(2, '0');
 
-                const witaDate = new Date(now.getTime() + 8 * 3600 * 1000);
-                const witaStr = [
-                    String(witaDate.getUTCHours()).padStart(2, '0'),
-                    String(witaDate.getUTCMinutes()).padStart(2, '0'),
-                    String(witaDate.getUTCSeconds()).padStart(2, '0')
-                ].join(':');
+                const witaTime = new Date(now.getTime() + 8 * 3600 * 1000);
+                const witaH = String(witaTime.getUTCHours()).padStart(2, '0');
+                const witaM = String(witaTime.getUTCMinutes()).padStart(2, '0');
+                const witaS = String(witaTime.getUTCSeconds()).padStart(2, '0');
 
                 const utcEl = document.getElementById('clock-utc');
                 const witaEl = document.getElementById('clock-wita');
-                if (utcEl) utcEl.textContent = `${utcStr} UTC`;
-                if (witaEl) witaEl.textContent = `${witaStr} WITA`;
+                if (utcEl) utcEl.textContent = `${utcH}:${utcM}:${utcS} UTC`;
+                if (witaEl) witaEl.textContent = `${witaH}:${witaM}:${witaS} WITA`;
             };
-            update();
-            setInterval(update, 1000);
+            updateClocks();
+            setInterval(updateClocks, 1000);
         }
 
+        // =========================================================================
+        // 5. TAB NAVIGATION & BALLOON PARAMETERS
+        // =========================================================================
         function switchTab(tabName) {
-            ['setup', 'observe', 'report'].forEach(t => {
-                const section = document.getElementById(`tab-${t}`);
+            const tabs = ['setup', 'observe', 'report'];
+            tabs.forEach(t => {
+                const sec = document.getElementById(`tab-${t}`);
                 const btn = document.getElementById(`tab-btn-${t}`);
-                if (!section || !btn) return;
+                if (!sec || !btn) return;
+
                 if (t === tabName) {
-                    section.classList.remove('hidden');
+                    sec.classList.remove('hidden');
                     btn.className = 'tab-btn flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-extrabold transition-all bg-sky-500 text-navy-950 shadow-md';
                 } else {
-                    section.classList.add('hidden');
+                    sec.classList.add('hidden');
                     btn.className = 'tab-btn flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:bg-navy-800 hover:text-white';
                 }
             });
 
             if (tabName === 'report') {
                 recalculateAll();
-                renderHistoryList();
-                setTimeout(drawWindProfileChart, 60);
+                setTimeout(drawWindProfileChart, 50);
             }
         }
 
@@ -1040,15 +1013,17 @@
             if (weight === '30') rateInput.value = 150;
             else if (weight === '100') rateInput.value = 180;
             saveToLocalStorage();
+            updateNumpadUI();
             recalculateAll();
         }
 
         // =========================================================================
-        // 6. DIGITAL WATERPASS & MULTI-SENSOR ANDROID
+        // 6. DIGITAL WATERPASS & MULTI-SENSOR ANDROID (ANTI-JITTER LOCKED)
         // =========================================================================
         async function activateRealSensors() {
             const badge = document.getElementById('sensor-status-badge');
             const diag = document.getElementById('sensor-source-diag');
+            lockedSensorSource = null; // Reset source lock on activation
 
             try {
                 if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -1059,40 +1034,22 @@
                     }
                 }
 
+                // Clean previous listeners if re-activated
+                window.removeEventListener('deviceorientationabsolute', handleOrientationEvent, true);
+                window.removeEventListener('deviceorientation', handleOrientationEvent, true);
+                window.removeEventListener('devicemotion', handleMotionFallback, true);
+
                 window.addEventListener('deviceorientationabsolute', handleOrientationEvent, true);
                 window.addEventListener('deviceorientation', handleOrientationEvent, true);
                 window.addEventListener('devicemotion', handleMotionFallback, true);
-
-                if ('AbsoluteOrientationSensor' in window) {
-                    try {
-                        const sensor = new AbsoluteOrientationSensor({ frequency: 20 });
-                        sensor.addEventListener('reading', () => {
-                            const q = sensor.quaternion;
-                            const sinr_cosp = 2 * (q[3] * q[0] + q[1] * q[2]);
-                            const cosr_cosp = 1 - 2 * (q[0] * q[0] + q[1] * q[1]);
-                            const roll = Math.atan2(sinr_cosp, cosr_cosp) * (180 / Math.PI);
-
-                            const sinp = 2 * (q[3] * q[1] - q[2] * q[0]);
-                            const pitch = Math.abs(sinp) >= 1 ? Math.sign(sinp) * 90 : Math.asin(sinp) * (180 / Math.PI);
-
-                            const siny_cosp = 2 * (q[3] * q[2] + q[0] * q[1]);
-                            const cosy_cosp = 1 - 2 * (q[1] * q[1] + q[2] * q[2]);
-                            let yaw = Math.atan2(siny_cosp, cosy_cosp) * (180 / Math.PI);
-                            yaw = (360 - yaw) % 360;
-
-                            processSensorData(yaw, pitch, roll, 'Android Fusion');
-                        });
-                        sensor.start();
-                    } catch (e) {}
-                }
 
                 sensorActive = true;
                 if (badge) {
                     badge.textContent = 'AKTIF';
                     badge.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
                 }
-                if (diag) diag.textContent = 'Sumber Sensor: Mendengarkan Sensor HP...';
-                showToast('Sensor HP diaktifkan! Gerakkan HP untuk cek Nivo.', 'success');
+                if (diag) diag.textContent = 'Sumber Sensor: Mengkalibrasi Sensor HP...';
+                showToast('Sensor HP diaktifkan! Letakkan datar lalu tekan Set Nol.', 'success');
             } catch (err) {
                 showToast('Gagal mengakses sensor HP. Pastikan akses via HTTPS.', 'error');
             }
@@ -1100,6 +1057,17 @@
 
         function handleOrientationEvent(e) {
             if (e.alpha === null && e.beta === null && e.gamma === null) return;
+            const currentType = e.absolute ? 'deviceorientationabsolute' : 'deviceorientation';
+
+            // Lock to deviceorientationabsolute if available, otherwise standard deviceorientation
+            if (!lockedSensorSource || lockedSensorSource === 'devicemotion') {
+                lockedSensorSource = currentType;
+            } else if (lockedSensorSource === 'deviceorientation' && currentType === 'deviceorientationabsolute') {
+                lockedSensorSource = 'deviceorientationabsolute';
+            } else if (lockedSensorSource !== currentType) {
+                return; // Ignore conflicting secondary stream
+            }
+
             let heading = 0;
             if (typeof e.webkitCompassHeading === 'number') {
                 heading = e.webkitCompassHeading;
@@ -1108,14 +1076,17 @@
             }
             const pitch = e.beta || 0;
             const roll = e.gamma || 0;
-            const src = e.absolute ? 'Compass Absolute' : 'DeviceOrientation';
+            const src = e.absolute ? 'Compass Absolute' : 'Gyro Orientation';
             processSensorData(heading, pitch, roll, src);
         }
 
         function handleMotionFallback(e) {
-            if (sensorActive && smoothedSensor.az !== 0) return;
+            // Only use accelerometer if orientation events never fired
+            if (lockedSensorSource && lockedSensorSource !== 'devicemotion') return;
             const acc = e.accelerationIncludingGravity;
             if (!acc || acc.x === null) return;
+            lockedSensorSource = 'devicemotion';
+
             const pitch = Math.atan2(acc.y, acc.z) * (180 / Math.PI);
             const roll = Math.atan2(-acc.x, Math.sqrt(acc.y * acc.y + acc.z * acc.z)) * (180 / Math.PI);
             processSensorData(rawSensor.az, pitch, roll, 'Accelerometer');
@@ -1131,14 +1102,28 @@
             // Elevation calculation when holding phone along sightline
             let rawElev = Math.max(0, Math.min(90, Math.abs(calPitch)));
 
-            // Low-pass smoothing filter
+            // Deadband anti-jitter filter (ignore micro noise < 0.25 deg)
             let diffAz = calAz - smoothedSensor.az;
             if (diffAz > 180) diffAz -= 360;
             if (diffAz < -180) diffAz += 360;
-            smoothedSensor.az = (smoothedSensor.az + SMOOTHING_ALPHA * diffAz + 360) % 360;
-            smoothedSensor.el = smoothedSensor.el + SMOOTHING_ALPHA * (rawElev - smoothedSensor.el);
-            smoothedSensor.pitch = smoothedSensor.pitch + SMOOTHING_ALPHA * (calPitch - smoothedSensor.pitch);
-            smoothedSensor.roll = smoothedSensor.roll + SMOOTHING_ALPHA * (calRoll - smoothedSensor.roll);
+            if (Math.abs(diffAz) > 0.25) {
+                smoothedSensor.az = (smoothedSensor.az + SMOOTHING_ALPHA * diffAz + 360) % 360;
+            }
+
+            const diffEl = rawElev - smoothedSensor.el;
+            if (Math.abs(diffEl) > 0.2) {
+                smoothedSensor.el = smoothedSensor.el + SMOOTHING_ALPHA * diffEl;
+            }
+
+            const diffPitch = calPitch - smoothedSensor.pitch;
+            if (Math.abs(diffPitch) > 0.2) {
+                smoothedSensor.pitch = smoothedSensor.pitch + SMOOTHING_ALPHA * diffPitch;
+            }
+
+            const diffRoll = calRoll - smoothedSensor.roll;
+            if (Math.abs(diffRoll) > 0.2) {
+                smoothedSensor.roll = smoothedSensor.roll + SMOOTHING_ALPHA * diffRoll;
+            }
 
             updateWaterpassUI(sourceName);
         }
@@ -1456,7 +1441,7 @@
             const valAz = document.getElementById('val-azimuth');
             const valEl = document.getElementById('val-elevation');
 
-            const rate = parseFloat(document.getElementById('ascent-rate')?.value) || 150;
+            const rate = STANDARD_ASCENT_RATE;
             if (badge) badge.textContent = editingMinute;
             if (saveNum) saveNum.textContent = editingMinute;
             if (hPrev) hPrev.textContent = `${Math.round(editingMinute * rate)} m`;
@@ -1545,7 +1530,7 @@
         // 9. PIBAL TRIGONOMETRY & WIND CALCULATION ENGINE
         // =========================================================================
         function recalculateAll() {
-            const rate = parseFloat(document.getElementById('ascent-rate')?.value) || 150;
+            const rate = STANDARD_ASCENT_RATE;
             const surfDir = parseFloat(document.getElementById('surface-dir')?.value) || 0;
             const surfSpd = parseFloat(document.getElementById('surface-spd')?.value) || 0;
 
@@ -1864,8 +1849,7 @@
                     name: document.getElementById('obs-name').value || 'Observer',
                     date: document.getElementById('obs-date').value || '',
                     hour: document.getElementById('obs-hour').value || '00',
-                    balloon: document.getElementById('balloon-weight').value || '30',
-                    rate: document.getElementById('ascent-rate').value || '150',
+                    rate: STANDARD_ASCENT_RATE,
                     surfDir: document.getElementById('surface-dir').value || '0',
                     surfSpd: document.getElementById('surface-spd').value || '0',
                     readings: JSON.parse(JSON.stringify(readings)),
@@ -1922,8 +1906,6 @@
             document.getElementById('obs-name').value = item.name;
             document.getElementById('obs-date').value = item.date;
             document.getElementById('obs-hour').value = item.hour;
-            document.getElementById('balloon-weight').value = item.balloon;
-            document.getElementById('ascent-rate').value = item.rate;
             document.getElementById('surface-dir').value = item.surfDir;
             document.getElementById('surface-spd').value = item.surfSpd;
 
@@ -1945,8 +1927,6 @@
                 const state = {
                     wmo: document.getElementById('obs-wmo').value,
                     name: document.getElementById('obs-name').value,
-                    balloon: document.getElementById('balloon-weight').value,
-                    rate: document.getElementById('ascent-rate').value,
                     surfDir: document.getElementById('surface-dir').value,
                     surfSpd: document.getElementById('surface-spd').value,
                     readings,
@@ -1963,8 +1943,6 @@
                 const state = JSON.parse(raw);
                 if (state.wmo) document.getElementById('obs-wmo').value = state.wmo;
                 if (state.name) document.getElementById('obs-name').value = state.name;
-                if (state.balloon) document.getElementById('balloon-weight').value = state.balloon;
-                if (state.rate) document.getElementById('ascent-rate').value = state.rate;
 
                 if (state.isSessionCompleted) {
                     // Start fresh observation session automatically when reopened
