@@ -4,25 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0b1528">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="PIBAL Bima">
-    <meta name="description" content="Aplikasi Pencatatan & Pengolahan Data PIBAL Otomatis - Stasiun Meteorologi Sultan Muhammad Salahuddin Bima">
-    <title>PIBAL KEEP 2.0 - Stamet Sultan Muhammad Salahuddin Bima</title>
-    <!-- Dynamic PWA App Icon & Manifest Links -->
-    <link id="pwa-apple-icon" rel="apple-touch-icon" href="">
-    <link id="pwa-icon" rel="icon" type="image/svg+xml" href="">
+    <meta name="apple-mobile-web-app-title" content="PIBAL-RM BIMA">
+    <title>PIBAL-RM BIMA | Stasiun Meteorologi Sultan Muhammad Salahuddin Bima</title>
+
+    <!-- Dynamic PWA Manifest & Icon will be injected via JS -->
     <link id="pwa-manifest" rel="manifest" href="">
+    <link id="pwa-apple-icon" rel="apple-touch-icon" href="">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -38,14 +37,6 @@
                             900: '#0b1528',
                             800: '#112240',
                             700: '#1d3557',
-                        },
-                        sky: {
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                        },
-                        amber: {
-                            500: '#f59e0b',
-                            600: '#d97706',
                         }
                     }
                 }
@@ -54,10 +45,10 @@
     </script>
 
     <style>
-        /* Custom styles for field usability & print view */
         body {
             -webkit-tap-highlight-color: transparent;
             user-select: none;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
         input, select, textarea {
             user-select: text;
@@ -68,15 +59,84 @@
         .numpad-btn:active {
             transform: scale(0.94);
         }
-        /* Hide scrollbar for clean horizontal table scroll */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+
+        /* ========================================================= */
+        /* HIGH-CONTRAST OUTDOOR DAYLIGHT MODE (DEFAULT FOR FIELD)   */
+        /* ========================================================= */
+        html:not(.dark) body {
+            background-color: #e2e8f0 !important;
+            color: #0f172a !important;
+            border-color: #cbd5e1 !important;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        html:not(.dark) .bg-navy-950,
+        html:not(.dark) .bg-navy-950\/90,
+        html:not(.dark) .bg-navy-950\/70 {
+            background-color: #f8fafc !important;
         }
-        /* Print Styles for Official BMKG Report */
+        html:not(.dark) .bg-navy-900,
+        html:not(.dark) .bg-navy-900\/95 {
+            background-color: #ffffff !important;
+        }
+        html:not(.dark) .bg-navy-800 {
+            background-color: #f1f5f9 !important;
+        }
+        html:not(.dark) .border-slate-800,
+        html:not(.dark) .border-slate-800\/80,
+        html:not(.dark) .border-slate-800\/60,
+        html:not(.dark) .border-slate-700,
+        html:not(.dark) .border-slate-700\/70 {
+            border-color: #cbd5e1 !important;
+        }
+        html:not(.dark) .text-white {
+            color: #0f172a !important;
+        }
+        html:not(.dark) .text-slate-100,
+        html:not(.dark) .text-slate-200,
+        html:not(.dark) .text-slate-300 {
+            color: #1e293b !important;
+        }
+        html:not(.dark) .text-slate-400,
+        html:not(.dark) .text-slate-500 {
+            color: #475569 !important;
+        }
+        html:not(.dark) .text-sky-400,
+        html:not(.dark) .text-sky-300 {
+            color: #0284c7 !important;
+        }
+        html:not(.dark) .text-emerald-400,
+        html:not(.dark) .text-emerald-300 {
+            color: #059669 !important;
+        }
+        html:not(.dark) .text-amber-400,
+        html:not(.dark) .text-amber-300 {
+            color: #d97706 !important;
+        }
+        html:not(.dark) .bg-emerald-950\/60 {
+            background-color: #ecfdf5 !important;
+        }
+        html:not(.dark) .bg-rose-950\/50,
+        html:not(.dark) .bg-rose-950\/60 {
+            background-color: #fff1f2 !important;
+        }
+        html:not(.dark) .text-rose-300,
+        html:not(.dark) .text-rose-400 {
+            color: #e11d48 !important;
+        }
+        html:not(.dark) .bg-sky-950\/70 {
+            background-color: #e0f2fe !important;
+        }
+        /* Keep white text on solid primary buttons */
+        html:not(.dark) .bg-sky-500,
+        html:not(.dark) .bg-emerald-500,
+        html:not(.dark) .bg-amber-500,
+        html:not(.dark) .bg-rose-500 {
+            color: #ffffff !important;
+        }
+        html:not(.dark) .bg-gradient-to-br.from-sky-500.to-blue-700 i {
+            color: #ffffff !important;
+        }
+
+        /* Official Print Styles */
         @media print {
             body {
                 background: white !important;
@@ -90,12 +150,12 @@
             }
             .print-card {
                 background: white !important;
-                border: 1px solid #cbd5e1 !important;
+                border: 1px solid #94a3b8 !important;
                 color: black !important;
                 box-shadow: none !important;
             }
             table th, table td {
-                border: 1px solid #94a3b8 !important;
+                border: 1px solid #64748b !important;
                 color: black !important;
                 padding: 4px 6px !important;
                 font-size: 11px !important;
@@ -103,232 +163,274 @@
         }
     </style>
 </head>
-<body class="bg-navy-950 text-slate-100 font-sans min-h-screen flex flex-col max-w-md mx-auto border-x border-slate-800/80 shadow-2xl">
+<body class="bg-navy-950 text-slate-100 font-sans min-h-screen flex flex-col max-w-xl mx-auto shadow-2xl border-x border-slate-800/60">
 
     <!-- Toast Notification Container -->
-    <div id="toast-container" class="fixed top-3 inset-x-3 z-50 flex flex-col items-center gap-2 pointer-events-none"></div>
+    <div id="toast-container" class="fixed top-4 inset-x-3 z-50 flex flex-col items-center gap-2 pointer-events-none max-w-md mx-auto"></div>
 
-    <!-- Print Header (Only visible when printing) -->
+    <!-- Official Print Header (Only visible when printing) -->
     <div class="hidden print-only border-b-2 border-black pb-3 mb-4 text-center">
-        <h2 class="text-sm font-bold uppercase tracking-wider">Badan Meteorologi, Klimatologi, dan Geofisika</h2>
-        <h1 class="text-lg font-extrabold uppercase">Stasiun Meteorologi Sultan Muhammad Salahuddin Bima</h1>
-        <p class="text-xs">Jl. Sultan Muhammad Salahuddin, Bandara Muhammad Salahuddin, Bima - NTB | WMO ID: <span id="print-wmo">97270</span></p>
-        <div class="mt-2 pt-2 border-t border-slate-400 flex justify-between text-xs font-semibold">
+        <h2 class="text-xs font-bold uppercase tracking-wider">Badan Meteorologi, Klimatologi, dan Geofisika</h2>
+        <h1 class="text-base font-extrabold uppercase">Stasiun Meteorologi Sultan Muhammad Salahuddin Bima</h1>
+        <p class="text-[11px]">Jl. Sultan Muhammad Salahuddin, Bandara Muhammad Salahuddin, Bima - NTB | WMO ID: <span id="print-wmo">97270</span></p>
+        <div class="mt-2 pt-2 border-t border-slate-400 flex justify-between text-xs font-bold">
             <span>LAPORAN PENGAMATAN UDARA ATAS (PIBAL)</span>
             <span id="print-meta-summary"></span>
         </div>
     </div>
 
-    <!-- Compact Mobile Top Header -->
+    <!-- Mobile App Top Header -->
     <header class="bg-navy-900 border-b border-slate-800 sticky top-0 z-40 shadow-md no-print">
         <div class="px-3.5 py-2.5 flex items-center justify-between gap-2">
             <!-- Branding -->
             <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow shrink-0">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow-sm shrink-0">
                     <i class="fa-solid fa-wind text-white text-base"></i>
                 </div>
-                <div class="truncate">
+                <div class="min-w-0">
                     <div class="flex items-center gap-1.5">
-                        <h1 class="font-extrabold text-sm tracking-tight text-white">PIBAL KEEP <span class="text-sky-400">2.0</span></h1>
-            <!-- Real-time UTC & WITA Clock & Install App Button -->
-            <div class="flex items-center gap-1.5 shrink-0">
-                <button id="btn-install-pwa" onclick="installPWAApp()" class="hidden bg-emerald-500 hover:bg-emerald-400 text-navy-950 font-extrabold text-[10px] px-2.5 py-1.5 rounded-xl shadow-lg flex items-center gap-1 transition animate-pulse">
-                    <i class="fa-solid fa-download"></i>
-                    <span>Install App</span>
-                </button>
-                <div class="bg-navy-950 border border-slate-800 rounded-xl px-2.5 py-1 text-right">
-                    <div class="flex items-center justify-end gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span id="clock-utc" class="font-mono text-xs font-bold text-sky-400">--:--:-- UTC</span>
+                        <h1 class="font-extrabold text-sm sm:text-base tracking-tight text-white truncate">PIBAL-RM <span class="text-sky-400">BIMA</span></h1>
+                        <span class="px-1.5 py-0.5 text-[9px] font-extrabold bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded shrink-0">BMKG</span>
                     </div>
-                    <div id="clock-wita" class="font-mono text-[9px] text-slate-400">--:--:-- WITA</div>
+                    <p class="text-[10px] text-slate-400 font-semibold truncate">Stamet Sultan Muhammad Salahuddin Bima</p>
+                </div>
+            </div>
+
+            <!-- Compact Controls: Theme + WakeLock + Clock -->
+            <div class="flex items-center gap-1.5 shrink-0">
+                <!-- Day/Night Outdoor Theme Toggle -->
+                <button onclick="toggleOutdoorTheme()" id="theme-toggle-btn" title="Ganti Tema Siang (Outdoor) / Malam" class="w-8 h-8 rounded-xl bg-navy-950 border border-slate-800 flex items-center justify-center text-amber-400 hover:border-sky-500 transition">
+                    <i id="theme-toggle-icon" class="fa-solid fa-sun text-xs"></i>
+                </button>
+
+                <!-- Sleek Wake Lock Pill -->
+                <button onclick="toggleWakeLockManual()" id="wakelock-badge" title="Kunci Layar Tetap Nyala" class="h-8 px-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center gap-1.5 transition">
+                    <span id="wakelock-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="wakelock-text" class="text-[10px] font-extrabold text-amber-400 tracking-wide">ON</span>
+                </button>
+
+                <!-- Compact UTC / WITA Clock -->
+                <div class="bg-navy-950 border border-slate-800 rounded-xl px-2.5 py-1 text-right">
+                    <div id="clock-utc" class="font-mono text-[11px] font-extrabold text-sky-400 leading-tight">--:--:-- UTC</div>
+                    <div id="clock-wita" class="font-mono text-[9px] font-semibold text-slate-400 leading-tight">--:--:-- WITA</div>
                 </div>
             </div>
         </div>
 
-        <!-- Simple 3-Step Mobile Navigation -->
+        <!-- 3-Step Mobile Navigation Tabs -->
         <nav class="px-3 pb-2 grid grid-cols-3 gap-1.5">
-            <button onclick="switchTab('setup')" id="tab-btn-setup" class="tab-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all bg-sky-500 text-navy-950 shadow">
+            <button onclick="switchTab('setup')" id="tab-btn-setup" class="tab-btn flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-extrabold transition-all bg-sky-500 text-navy-950 shadow-md">
                 <i class="fa-solid fa-sliders"></i>
                 <span>1. Setup</span>
             </button>
-            <button onclick="switchTab('observe')" id="tab-btn-observe" class="tab-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:bg-navy-800 hover:text-white">
+            <button onclick="switchTab('observe')" id="tab-btn-observe" class="tab-btn flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:bg-navy-800 hover:text-white">
                 <i class="fa-solid fa-stopwatch"></i>
                 <span>2. Rekam</span>
             </button>
-            <button onclick="switchTab('report')" id="tab-btn-report" class="tab-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:bg-navy-800 hover:text-white">
+            <button onclick="switchTab('report')" id="tab-btn-report" class="tab-btn flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:bg-navy-800 hover:text-white">
                 <i class="fa-solid fa-file-code"></i>
                 <span>3. Sandi</span>
             </button>
         </nav>
     </header>
 
-    <!-- Main Mobile Content Area -->
-    <main class="flex-1 w-full px-3 py-3 space-y-3">
+    <!-- Main Content Area -->
+    <main class="flex-1 px-3 py-3.5 pb-16 space-y-3.5">
 
         <!-- ========================================================= -->
-        <!-- TAB 1: SETUP & NIVO HP (SIMPLIFIED FOR MOBILE)            -->
+        <!-- TAB 1: SETUP & NIVO DIGITAL                               -->
         <!-- ========================================================= -->
-        <section id="tab-setup" class="space-y-3 no-print">
-            
-            <!-- Nivo Digital & Sensor HP Card -->
-            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-3.5 shadow-lg space-y-3">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <section id="tab-setup" class="space-y-3.5 no-print">
+
+            <!-- Digital Waterpass / Nivo Card -->
+            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-compass text-emerald-400"></i>
-                        <h2 class="font-bold text-sm text-white">Nivo & Sensor HP</h2>
+                        <h2 class="font-bold text-sm text-white">Nivo Digital & Orientasi Sensor HP</h2>
                     </div>
-                    <span id="sensor-status-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">OFF</span>
+                    <span id="sensor-status-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">STANDBY</span>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <!-- Compact Bubble Level -->
-                    <div class="relative w-28 h-28 rounded-full bg-navy-950 border-2 border-slate-700 shadow-inner flex items-center justify-center shrink-0 overflow-hidden">
-                        <div class="absolute inset-x-0 h-[1px] bg-slate-800"></div>
-                        <div class="absolute inset-y-0 w-[1px] bg-slate-800"></div>
-                        <div class="w-8 h-8 rounded-full border border-emerald-500/60 z-10"></div>
-                        <div id="waterpass-bubble" class="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-300 shadow-md absolute transition-transform duration-75 ease-out border border-white/40" style="transform: translate(0px, 0px);"></div>
+                <div class="flex items-center gap-4">
+                    <!-- Bubble Level Visual -->
+                    <div class="relative w-28 h-28 rounded-full bg-navy-950 border-4 border-slate-700 shadow-inner flex items-center justify-center overflow-hidden shrink-0">
+                        <div class="absolute inset-x-0 h-[1px] bg-slate-700/80"></div>
+                        <div class="absolute inset-y-0 w-[1px] bg-slate-700/80"></div>
+                        <div class="w-9 h-9 rounded-full border-2 border-emerald-500/60 z-10 flex items-center justify-center">
+                            <div class="w-1.5 h-1.5 rounded-full bg-emerald-400/50"></div>
+                        </div>
+                        <div id="waterpass-bubble" class="w-7 h-7 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-300 shadow-lg shadow-emerald-500/40 absolute transition-transform duration-75 ease-out opacity-95 border border-white/50" style="transform: translate(0px, 0px);"></div>
                     </div>
 
-                    <!-- Sensor Readouts & Action Buttons -->
-                    <div class="flex-1 space-y-2">
-                        <div id="level-indicator-text" class="text-[11px] font-bold text-emerald-400">POSISI DATAR (LEVEL)</div>
-                        <div id="sensor-diag-msg" class="hidden text-[10px] text-amber-300 bg-amber-950/60 border border-amber-500/40 rounded-lg px-2 py-1 leading-tight"></div>
+                    <!-- Readouts & Action Buttons -->
+                    <div class="flex-1 space-y-2 min-w-0">
+                        <div id="level-indicator-text" class="text-[11px] font-extrabold text-emerald-400 truncate">POSISI DATAR (LEVEL OK)</div>
+                        
                         <div class="grid grid-cols-3 gap-1.5 text-center">
-                            <div class="bg-navy-950 border border-slate-800 rounded-lg p-1.5">
-                                <div class="text-[9px] text-slate-400 uppercase">Azimuth</div>
-                                <div id="sensor-azimuth" class="font-mono text-xs font-bold text-sky-400">0.0°</div>
+                            <div class="bg-navy-950 border border-slate-800 rounded-lg py-1.5 px-1">
+                                <div class="text-[9px] text-slate-400 font-bold uppercase">Azimuth</div>
+                                <div id="sensor-azimuth" class="font-mono text-xs font-extrabold text-sky-400">0.0°</div>
                             </div>
-                            <div class="bg-navy-950 border border-slate-800 rounded-lg p-1.5">
-                                <div class="text-[9px] text-slate-400 uppercase">Pitch</div>
-                                <div id="sensor-pitch" class="font-mono text-xs font-bold text-emerald-400">0.0°</div>
+                            <div class="bg-navy-950 border border-slate-800 rounded-lg py-1.5 px-1">
+                                <div class="text-[9px] text-slate-400 font-bold uppercase">Pitch</div>
+                                <div id="sensor-pitch" class="font-mono text-xs font-extrabold text-emerald-400">0.0°</div>
                             </div>
-                            <div class="bg-navy-950 border border-slate-800 rounded-lg p-1.5">
-                                <div class="text-[9px] text-slate-400 uppercase">Roll</div>
-                                <div id="sensor-roll" class="font-mono text-xs font-bold text-emerald-400">0.0°</div>
+                            <div class="bg-navy-950 border border-slate-800 rounded-lg py-1.5 px-1">
+                                <div class="text-[9px] text-slate-400 font-bold uppercase">Roll</div>
+                                <div id="sensor-roll" class="font-mono text-xs font-extrabold text-amber-400">0.0°</div>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-1.5">
-                            <button onclick="activateRealSensors()" class="bg-sky-500 hover:bg-sky-400 text-navy-950 font-extrabold text-[11px] py-2 px-2 rounded-xl transition flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-mobile-screen-button"></i>
+
+                        <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+                            <button onclick="activateRealSensors()" class="bg-sky-500 hover:bg-sky-400 text-navy-950 font-extrabold text-xs py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1 shadow">
+                                <i class="fa-solid fa-satellite-dish"></i>
                                 <span>Aktifkan</span>
                             </button>
-                            <button onclick="calibrateZeroOffset()" class="bg-amber-500 hover:bg-amber-400 text-navy-950 font-extrabold text-[11px] py-2 px-2 rounded-xl transition flex items-center justify-center gap-1">
+                            <button onclick="calibrateZeroOffset()" class="bg-amber-500 hover:bg-amber-400 text-navy-950 font-extrabold text-xs py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1 shadow">
                                 <i class="fa-solid fa-crosshairs"></i>
                                 <span>Set Nol</span>
                             </button>
                         </div>
                     </div>
                 </div>
-                <div class="bg-navy-950/60 py-1.5 px-2.5 rounded-lg space-y-0.5 text-center">
-                    <p id="calibration-info" class="text-[10px] text-slate-400 font-mono">Offset: Az 0.0° | Pitch 0.0° | Roll 0.0°</p>
-                    <p id="raw-sensor-debug" class="text-[9px] text-sky-400/80 font-mono">Sumber Sensor: Menunggu aktivasi...</p>
+
+                <!-- Diagnostic Info Bar -->
+                <div class="bg-navy-950/90 border border-slate-800/80 rounded-xl px-3 py-1.5 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                    <span id="sensor-source-diag">Sumber Sensor: Menunggu Aktivasi</span>
+                    <span id="calibration-info">Offset: 0.0° / 0.0°</span>
                 </div>
             </div>
 
-            <!-- Metadata Form Card -->
-            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-3.5 shadow-lg space-y-3">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <!-- Observation Metadata Form Card -->
+            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3.5">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-clipboard-list text-sky-400"></i>
-                        <h2 class="font-bold text-sm text-white">Data Pengamatan</h2>
+                        <h2 class="font-bold text-sm text-white">Parameter Pengamatan PIBAL</h2>
                     </div>
-                    <button onclick="autoDetectSynoptic()" class="text-[11px] bg-navy-800 text-sky-400 px-2.5 py-1 rounded-lg border border-slate-700 font-semibold">
+                    <button onclick="autoDetectSynoptic()" class="text-[11px] bg-navy-800 hover:bg-slate-700 text-sky-400 px-2.5 py-1 rounded-lg border border-slate-700 font-bold transition">
                         <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Auto Jam
                     </button>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2.5">
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Tanggal (UTC)</label>
-                        <input type="date" id="obs-date" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs font-medium text-white focus:outline-none focus:border-sky-500">
+                    <!-- Stasiun -->
+                    <div class="col-span-2">
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Stasiun Meteorologi</label>
+                        <input type="text" id="obs-station" value="Stamet Sultan Muhammad Salahuddin Bima" readonly class="w-full bg-navy-950/70 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-300 focus:outline-none">
                     </div>
 
+                    <!-- WMO ID -->
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Jam Sinoptik</label>
-                        <select id="obs-hour" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs font-bold text-sky-400 focus:outline-none focus:border-sky-500">
-                            <option value="00">00 UTC (08 WITA)</option>
-                            <option value="06">06 UTC (14 WITA)</option>
-                            <option value="12">12 UTC (20 WITA)</option>
-                            <option value="18">18 UTC (02 WITA)</option>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nomor Stasiun (WMO ID)</label>
+                        <input type="text" id="obs-wmo" value="97270" maxlength="5" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-mono font-bold text-white focus:outline-none focus:border-sky-500">
+                    </div>
+
+                    <!-- Nama Observer -->
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Observer / Pengamat</label>
+                        <input type="text" id="obs-name" placeholder="Nama Pengamat" value="Observer Stamet Bima" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500">
+                    </div>
+
+                    <!-- Tanggal -->
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Tanggal Pengamatan (UTC)</label>
+                        <input type="date" id="obs-date" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-medium text-white focus:outline-none focus:border-sky-500">
+                    </div>
+
+                    <!-- Jam Sinoptik -->
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Jam Pengamatan (UTC)</label>
+                        <select id="obs-hour" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-bold text-sky-400 focus:outline-none focus:border-sky-500">
+                            <option value="00">00 UTC (08:00 WITA)</option>
+                            <option value="06">06 UTC (14:00 WITA)</option>
+                            <option value="12">12 UTC (20:00 WITA)</option>
+                            <option value="18">18 UTC (02:00 WITA)</option>
                         </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Observer</label>
-                        <input type="text" id="obs-name" value="Observer Stamet Bima" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">WMO ID Stasiun</label>
-                        <input type="text" id="obs-wmo" value="97270" maxlength="5" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs font-mono font-bold text-white focus:outline-none focus:border-sky-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Berat Balon</label>
-                        <select id="balloon-weight" onchange="updateAscentRateByBalloon()" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs font-medium text-white focus:outline-none focus:border-sky-500">
-                            <option value="30">30 Gram (150 m/m)</option>
-                            <option value="100">100 Gram (300 m/m)</option>
-                            <option value="custom">Kustom</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Ascent Rate (m/mnt)</label>
-                        <input type="number" id="ascent-rate" value="150" step="5" min="50" max="500" onchange="recalculateAll()" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs font-mono font-bold text-amber-400 focus:outline-none focus:border-sky-500">
                     </div>
                 </div>
 
                 <!-- Surface Wind (Menit ke-0) -->
-                <div class="bg-navy-950/90 border border-slate-800 rounded-xl p-2.5 space-y-2">
-                    <span class="text-[11px] font-bold text-sky-400 block"><i class="fa-solid fa-gauge-high mr-1"></i>Angin Permukaan (Menit ke-0)</span>
+                <div class="bg-navy-950/90 border border-slate-800 rounded-xl p-3 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-sky-400 uppercase tracking-wider"><i class="fa-solid fa-gauge-high mr-1"></i>Angin Permukaan (Surface)</span>
+                        <span class="text-[10px] text-slate-400">Anemometer</span>
+                    </div>
                     <div class="grid grid-cols-2 gap-2.5">
                         <div>
-                            <label class="block text-[10px] text-slate-400 mb-0.5">Arah (0-360°)</label>
-                            <input type="number" id="surface-dir" value="120" min="0" max="360" onchange="recalculateAll()" class="w-full bg-navy-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs font-mono font-bold text-white">
+                            <label class="block text-[10px] text-slate-400 mb-1">Arah Angin (0 - 360°)</label>
+                            <input type="number" id="surface-dir" value="120" min="0" max="360" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-mono font-bold text-white focus:outline-none focus:border-sky-500">
                         </div>
                         <div>
-                            <label class="block text-[10px] text-slate-400 mb-0.5">Kecepatan (Knot)</label>
-                            <input type="number" id="surface-spd" value="8" min="0" max="150" onchange="recalculateAll()" class="w-full bg-navy-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs font-mono font-bold text-white">
+                            <label class="block text-[10px] text-slate-400 mb-1">Kecepatan (Knot)</label>
+                            <input type="number" id="surface-spd" value="8" min="0" max="150" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-mono font-bold text-white focus:outline-none focus:border-sky-500">
                         </div>
                     </div>
                 </div>
 
-                <button onclick="switchTab('observe')" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-sm py-3 rounded-xl shadow-lg flex items-center justify-center gap-2 transition">
-                    <span>Mulai Pengamatan</span>
+                <button onclick="switchTab('observe')" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-sm py-3.5 rounded-xl shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition">
+                    <span>Mulai Pengamatan Lapangan</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
+
+                <!-- PWA Install App Card -->
+                <div id="install-app-card" class="bg-sky-950/70 border border-sky-500/40 rounded-xl p-3 flex items-center justify-between gap-2.5">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-9 h-9 rounded-xl bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 shrink-0">
+                            <i class="fa-solid fa-mobile-screen-button text-base"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="text-xs font-extrabold text-white truncate">Pasang ke Layar Utama HP</div>
+                            <div class="text-[10px] text-slate-400 truncate">Tampilan layar penuh & bisa offline</div>
+                        </div>
+                    </div>
+                    <button onclick="installPWAApp()" class="bg-sky-500 hover:bg-sky-400 text-navy-950 font-extrabold text-xs py-2 px-3 rounded-xl shadow shrink-0 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Install App</span>
+                    </button>
+                </div>
             </div>
         </section>
 
         <!-- ========================================================= -->
-        <!-- TAB 2: REKAM DATA (MOBILE ONE-HAND FIELD INTERFACE)       -->
+        <!-- TAB 2: REKAM DATA (TIMER + AUTO/MANUAL + TABEL)           -->
         <!-- ========================================================= -->
-        <section id="tab-observe" class="hidden space-y-3 no-print">
-            
+        <section id="tab-observe" class="hidden space-y-3.5 no-print">
+
             <!-- Compact Stopwatch Card -->
-            <div id="timer-box" class="bg-navy-900 border-2 border-slate-800 rounded-2xl p-3.5 shadow-lg space-y-2.5 transition-colors">
+            <div id="timer-box" class="bg-navy-900 border-2 border-slate-800 rounded-2xl p-3.5 shadow-xl space-y-3 transition-colors duration-200">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-sky-400">Target: Menit ke-<span id="target-minute-label">1</span></span>
-                    <span id="timer-status-text" class="text-[11px] font-semibold text-slate-400">Siap Lepas Balon</span>
-                    <button onclick="toggleAudioMute()" id="btn-audio-toggle" class="text-[11px] bg-navy-950 border border-slate-700 px-2 py-0.5 rounded-lg text-emerald-400 font-semibold flex items-center gap-1">
-                        <i class="fa-solid fa-volume-high"></i>
-                        <span>Beep</span>
-                    </button>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-stopwatch mr-1 text-amber-400"></i>Timer 1 Menit</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] font-bold text-sky-400">Target: Mnt <span id="target-minute-label">1</span></span>
+                        <button onclick="toggleAudioMute()" id="btn-audio-toggle" class="text-[11px] bg-navy-950 border border-slate-700 px-2 py-0.5 rounded-lg text-emerald-400 font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-volume-high"></i>
+                            <span>Beep</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="flex items-center justify-between gap-3">
-                    <div id="stopwatch-display" class="font-mono text-4xl font-extrabold text-white tracking-tight">00:00</div>
-                    <div class="flex items-center gap-1.5 flex-1 justify-end">
-                        <button onclick="startTimer()" id="btn-timer-start" class="bg-emerald-500 hover:bg-emerald-600 text-navy-950 font-extrabold text-xs py-3 px-4 rounded-xl shadow flex items-center justify-center gap-1.5 transition">
+                <div class="flex items-center justify-between gap-3 bg-navy-950 border border-slate-800/80 rounded-xl px-3.5 py-2.5">
+                    <div>
+                        <div id="stopwatch-display" class="font-mono text-4xl font-extrabold text-white tracking-tight">00:00</div>
+                        <div id="timer-status-text" class="text-[11px] font-semibold text-slate-400 mt-0.5">Siap Lepas Balon</div>
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="startTimer()" id="btn-timer-start" class="bg-emerald-500 hover:bg-emerald-600 text-navy-950 font-extrabold text-xs py-3 px-3 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-1.5 transition">
                             <i class="fa-solid fa-play"></i>
                             <span>LEPAS BALON</span>
                         </button>
-                        <button onclick="pauseTimer()" id="btn-timer-pause" class="hidden bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-xs py-3 px-4 rounded-xl shadow flex items-center justify-center gap-1.5 transition">
+                        <button onclick="pauseTimer()" id="btn-timer-pause" class="hidden bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-xs py-3 px-3 rounded-xl shadow-lg flex items-center gap-1.5 transition">
                             <i class="fa-solid fa-pause"></i>
                             <span>PAUSE</span>
                         </button>
-                        <button onclick="resetTimerConfirm()" class="bg-navy-800 text-slate-300 border border-slate-700 font-bold text-xs py-3 px-3 rounded-xl">
+                        <button onclick="stopAndFinishObservation()" id="btn-timer-stop" title="Selesai Merekam & Buka Sandi" class="hidden bg-rose-500 hover:bg-rose-600 text-white font-extrabold text-xs py-3 px-3 rounded-xl shadow-lg shadow-rose-500/20 flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                            <span>SELESAI</span>
+                        </button>
+                        <button onclick="resetTimerConfirm()" title="Reset Timer" class="bg-navy-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-400 border border-slate-700 font-bold text-xs p-3 rounded-xl transition">
                             <i class="fa-solid fa-rotate-left"></i>
                         </button>
                     </div>
@@ -340,78 +442,77 @@
                 </div>
             </div>
 
-            <!-- Mode Toggle Switch -->
-            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-1.5 grid grid-cols-2 gap-1.5">
-                <button onclick="setRecordMode('auto')" id="mode-btn-auto" class="py-2.5 px-2 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all bg-emerald-500 text-navy-950 shadow">
+            <!-- Mode Toggle Switch (Auto Sensor HP vs Input Manual) -->
+            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-1.5 grid grid-cols-2 gap-1.5 shadow-lg">
+                <button onclick="setRecordMode('auto')" id="mode-btn-auto" class="py-2.5 px-2 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all bg-emerald-500 text-navy-950 shadow-md">
                     <i class="fa-solid fa-satellite-dish"></i>
                     <span>Auto Sensor HP</span>
                 </button>
-                <button onclick="setRecordMode('manual')" id="mode-btn-manual" class="py-2.5 px-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:bg-navy-800">
+                <button onclick="setRecordMode('manual')" id="mode-btn-manual" class="py-2.5 px-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:bg-navy-800 hover:text-white">
                     <i class="fa-solid fa-keyboard"></i>
                     <span>Input Manual</span>
                 </button>
             </div>
 
-            <!-- Panel A: AUTO-CAPTURE SENSOR HP -->
-            <div id="panel-mode-auto" class="bg-navy-900 border border-emerald-500/40 rounded-2xl p-3.5 shadow-lg space-y-3">
+            <!-- Panel A: AUTO SENSOR HP MODE -->
+            <div id="panel-mode-auto" class="bg-navy-900 border border-emerald-500/40 rounded-2xl p-3.5 shadow-xl space-y-3">
                 <div id="auto-capture-banner" class="bg-emerald-950/60 border border-emerald-500/40 rounded-xl p-2.5 flex items-center justify-between transition-all">
-                    <div class="pr-2">
-                        <div id="auto-banner-title" class="text-[11px] font-extrabold text-emerald-300">REKAM OTOMATIS TIAP MENIT</div>
-                        <div id="auto-banner-sub" class="text-[10px] text-slate-300 leading-tight mt-0.5">Sudut terkunci otomatis saat timer tepat di detik :00.</div>
+                    <div class="flex items-center gap-2 min-w-0">
+                        <i class="fa-solid fa-bolt text-emerald-400 text-sm shrink-0"></i>
+                        <div class="min-w-0">
+                            <div id="auto-banner-title" class="text-[11px] font-extrabold text-emerald-300 truncate">REKAM OTOMATIS TIAP MENIT AKTIF</div>
+                            <div id="auto-banner-sub" class="text-[10px] text-slate-300 truncate">Terkunci otomatis setiap detik ke-60 (01:00, 02:00, dst).</div>
+                        </div>
                     </div>
-                    <span class="font-mono text-xs font-bold bg-navy-950 text-emerald-400 px-2 py-1 rounded-lg border border-emerald-500/30 shrink-0">MNT <span id="auto-next-min-badge">1</span></span>
+                    <span class="font-mono text-[11px] font-extrabold bg-navy-950 text-emerald-400 px-2 py-0.5 rounded-lg border border-emerald-500/30 shrink-0">MNT <span id="auto-next-min-badge">1</span></span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2.5">
-                    <div class="bg-navy-950 border border-sky-500/50 rounded-xl p-3 text-center">
-                        <span class="text-[10px] font-bold uppercase text-sky-400 block">Azimuth HP</span>
+                    <div class="bg-navy-950 border-2 border-sky-500/50 rounded-xl p-3 text-center">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400 block">Live Azimuth</span>
                         <div id="live-auto-az" class="font-mono text-3xl font-extrabold text-white my-1">0.0°</div>
                     </div>
-                    <div class="bg-navy-950 border border-emerald-500/50 rounded-xl p-3 text-center">
-                        <span class="text-[10px] font-bold uppercase text-emerald-400 block">Elevasi HP</span>
+                    <div class="bg-navy-950 border-2 border-emerald-500/50 rounded-xl p-3 text-center">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block">Live Elevasi</span>
                         <div id="live-auto-el" class="font-mono text-3xl font-extrabold text-white my-1">0.0°</div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="activateRealSensors()" class="bg-sky-500/20 text-sky-400 border border-sky-500/40 font-bold text-xs py-3 px-2 rounded-xl flex items-center justify-center gap-1.5">
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="activateRealSensors()" class="bg-navy-800 hover:bg-slate-700 text-sky-400 border border-slate-700 font-bold text-[11px] py-3 px-2 rounded-xl transition flex items-center justify-center gap-1">
                         <i class="fa-solid fa-compass"></i>
-                        <span>Aktifkan Sensor</span>
+                        <span>Sensor</span>
                     </button>
-                    <button onclick="calibrateZeroOffset()" class="bg-navy-800 text-amber-400 border border-slate-700 font-bold text-xs py-3 px-2 rounded-xl flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-crosshairs"></i>
-                        <span>Set Nol Alat</span>
+                    <button onclick="triggerAutoRecordNow(true)" class="col-span-2 bg-emerald-500 hover:bg-emerald-600 text-navy-950 font-extrabold text-xs py-3 px-3 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-1.5 transition">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Rekam Sekarang (Mnt <span id="btn-auto-now-min">1</span>)</span>
                     </button>
                 </div>
-
-                <button onclick="triggerAutoRecordNow(true)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-navy-950 font-extrabold text-xs py-3.5 px-4 rounded-xl shadow-lg flex items-center justify-center gap-2 transition">
-                    <i class="fa-solid fa-camera"></i>
-                    <span>REKAM SEKARANG (MENIT <span id="btn-auto-now-min">1</span>)</span>
-                </button>
             </div>
 
-            <!-- Panel B: MANUAL TOUCHSCREEN NUMPAD -->
-            <div id="panel-mode-manual" class="hidden bg-navy-900 border border-slate-800 rounded-2xl p-3.5 shadow-lg space-y-2.5">
+            <!-- Panel B: INPUT MANUAL NUMPAD MODE -->
+            <div id="panel-mode-manual" class="hidden bg-navy-900 border border-slate-800 rounded-2xl p-3.5 shadow-xl space-y-2.5">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                     <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 rounded-lg bg-amber-500 text-navy-950 font-extrabold text-xs">MENIT <span id="input-minute-badge">1</span></span>
-                        <span class="text-[11px] text-slate-400"><strong id="input-height-preview" class="text-white font-mono">150 m</strong></span>
+                        <span class="px-2 py-0.5 rounded-lg bg-amber-500 text-navy-950 font-extrabold text-xs">MENIT KE-<span id="input-minute-badge">1</span></span>
+                        <span class="text-[11px] text-slate-400 font-mono" id="input-height-preview">150 m</span>
                     </div>
                     <div class="flex items-center gap-1">
-                        <button onclick="changeEditingMinute(-1)" class="w-7 h-7 rounded-lg bg-navy-800 text-slate-300 flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button onclick="changeEditingMinute(1)" class="w-7 h-7 rounded-lg bg-navy-800 text-slate-300 flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button onclick="changeEditingMinute(-1)" class="w-7 h-7 rounded-lg bg-navy-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button onclick="changeEditingMinute(1)" class="w-7 h-7 rounded-lg bg-navy-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-right"></i></button>
                     </div>
                 </div>
 
+                <!-- Dual Input Boxes -->
                 <div class="grid grid-cols-2 gap-2.5">
-                    <div onclick="setActiveField('azimuth')" id="field-box-azimuth" class="cursor-pointer bg-navy-950 border-2 border-sky-500 rounded-xl p-2.5">
+                    <div onclick="setActiveField('azimuth')" id="field-box-azimuth" class="cursor-pointer bg-navy-950 border-2 border-sky-500 rounded-xl p-2.5 transition">
                         <span class="text-[10px] font-bold uppercase text-sky-400 block">Azimuth (0-360°)</span>
                         <div class="font-mono text-2xl font-extrabold text-white mt-0.5 h-8 flex items-center">
                             <span id="val-azimuth"></span><span class="animate-pulse text-sky-400 ml-0.5" id="cursor-azimuth">|</span>
                         </div>
                     </div>
 
-                    <div onclick="setActiveField('elevation')" id="field-box-elevation" class="cursor-pointer bg-navy-950 border-2 border-slate-800 rounded-xl p-2.5">
+                    <div onclick="setActiveField('elevation')" id="field-box-elevation" class="cursor-pointer bg-navy-950 border-2 border-slate-800 rounded-xl p-2.5 transition">
                         <span class="text-[10px] font-bold uppercase text-slate-400 block" id="label-elevation">Elevasi (0-90°)</span>
                         <div class="font-mono text-2xl font-extrabold text-white mt-0.5 h-8 flex items-center">
                             <span id="val-elevation"></span><span class="hidden animate-pulse text-sky-400 ml-0.5" id="cursor-elevation">|</span>
@@ -419,405 +520,484 @@
                     </div>
                 </div>
 
-                <!-- Large Mobile Numpad -->
+                <!-- Large Anti-Typo Numpad -->
                 <div class="grid grid-cols-4 gap-1.5">
-                    <button onclick="numpadPress('7')" class="numpad-btn bg-navy-800 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">7</button>
-                    <button onclick="numpadPress('8')" class="numpad-btn bg-navy-800 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">8</button>
-                    <button onclick="numpadPress('9')" class="numpad-btn bg-navy-800 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">9</button>
-                    <button onclick="numpadBackspace()" class="numpad-btn bg-rose-950/70 text-rose-300 font-bold text-base py-3 rounded-xl border border-rose-800/50 flex items-center justify-center"><i class="fa-solid fa-delete-left"></i></button>
+                    <button onclick="numpadPress('7')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">7</button>
+                    <button onclick="numpadPress('8')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">8</button>
+                    <button onclick="numpadPress('9')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">9</button>
+                    <button onclick="numpadBackspace()" class="numpad-btn bg-rose-950/60 hover:bg-rose-900/70 text-rose-300 font-bold text-base py-3 rounded-xl border border-rose-800/50 flex items-center justify-center"><i class="fa-solid fa-delete-left"></i></button>
 
-                    <button onclick="numpadPress('4')" class="numpad-btn bg-navy-800 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">4</button>
-                    <button onclick="numpadPress('5')" class="numpad-btn bg-navy-800 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">5</button>
-                    <button onclick="numpadPress('6')" class="numpad-btn bg-navy-800 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">6</button>
-                    <button onclick="numpadClear()" class="numpad-btn bg-slate-800 text-slate-300 font-bold text-[11px] py-3 rounded-xl border border-slate-700">CLEAR</button>
+                    <button onclick="numpadPress('4')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">4</button>
+                    <button onclick="numpadPress('5')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">5</button>
+                    <button onclick="numpadPress('6')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">6</button>
+                    <button onclick="numpadClear()" class="numpad-btn bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-[11px] py-3 rounded-xl border border-slate-700">CLEAR</button>
 
-                    <button onclick="numpadPress('1')" class="numpad-btn bg-navy-800 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">1</button>
-                    <button onclick="numpadPress('2')" class="numpad-btn bg-navy-800 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">2</button>
-                    <button onclick="numpadPress('3')" class="numpad-btn bg-navy-800 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">3</button>
-                    <button onclick="switchActiveField()" class="numpad-btn bg-sky-500/20 text-sky-400 font-bold text-[10px] py-3 rounded-xl border border-sky-500/40 flex flex-col items-center justify-center leading-tight">
-                        <span>PINDAH</span>
-                        <span class="text-[8px]">AZ / EL</span>
-                    </button>
+                    <button onclick="numpadPress('1')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">1</button>
+                    <button onclick="numpadPress('2')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">2</button>
+                    <button onclick="numpadPress('3')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">3</button>
+                    <button onclick="switchActiveField()" class="numpad-btn bg-sky-950/70 hover:bg-sky-900/80 text-sky-300 font-bold text-[11px] py-3 rounded-xl border border-sky-700/50">NEXT <i class="fa-solid fa-arrow-right-arrow-left ml-0.5"></i></button>
 
-                    <button onclick="numpadPress('0')" class="numpad-btn bg-navy-800 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">0</button>
-                    <button onclick="numpadPress('.')" class="numpad-btn bg-navy-800 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">.</button>
-                    <button onclick="saveMinuteReading()" class="numpad-btn col-span-2 bg-amber-500 text-navy-950 font-extrabold text-xs py-3 px-2 rounded-xl shadow flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-check-circle"></i>
+                    <button onclick="numpadPress('0')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">0</button>
+                    <button onclick="numpadPress('.')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">.</button>
+                    <button onclick="saveMinuteReading()" class="numpad-btn col-span-2 bg-emerald-500 hover:bg-emerald-600 text-navy-950 font-extrabold text-xs py-3 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-check"></i>
                         <span>SIMPAN MNT <span id="btn-save-min-num">1</span></span>
                     </button>
                 </div>
             </div>
 
-            <!-- Compact Mobile Plotting Sheet Table -->
-            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-3.5 shadow-lg space-y-2.5">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-xs text-white flex items-center gap-1.5">
-                        <i class="fa-solid fa-table text-sky-400"></i>
-                        <span>Hasil Rekaman (<strong id="total-minutes-count" class="text-sky-400">0</strong> Mnt)</span>
-                    </h3>
+            <!-- Recorded Observations Table Card -->
+            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-3.5 shadow-xl space-y-2.5">
+                <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-1.5">
-                        <button onclick="loadSampleData()" class="text-[10px] font-bold text-sky-400 bg-sky-500/10 border border-sky-500/30 px-2 py-1 rounded-lg">Contoh</button>
-                        <button onclick="clearAllReadings()" class="text-[10px] font-bold text-rose-400 bg-rose-950/60 border border-rose-800/50 px-2 py-1 rounded-lg">Hapus</button>
+                        <i class="fa-solid fa-table-list text-sky-400 text-xs"></i>
+                        <h3 class="font-bold text-xs text-white">Hasil Rekam (<span id="total-minutes-count">0</span> Mnt)</h3>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="loadSampleData()" class="text-[10px] bg-navy-800 hover:bg-slate-700 text-sky-400 border border-slate-700 px-2 py-1 rounded-lg font-bold transition">
+                            Muat Data Contoh
+                        </button>
+                        <button onclick="clearAllReadings()" class="text-[10px] bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 border border-rose-800/50 px-2 py-1 rounded-lg font-bold transition">
+                            Hapus
+                        </button>
                     </div>
                 </div>
 
                 <div class="overflow-x-auto rounded-xl border border-slate-800">
-                    <table class="w-full text-left border-collapse text-[11px]">
+                    <table class="w-full text-left border-collapse font-mono text-[11px]">
                         <thead>
-                            <tr class="bg-navy-950 text-slate-400 border-b border-slate-800 font-bold uppercase text-[9px]">
+                            <tr class="bg-navy-950 text-slate-400 border-b border-slate-800 text-[10px]">
                                 <th class="py-2 px-2">Mnt</th>
+                                <th class="py-2 px-2">El</th>
+                                <th class="py-2 px-2">Az</th>
                                 <th class="py-2 px-2">Tinggi</th>
-                                <th class="py-2 px-2">Az / El</th>
                                 <th class="py-2 px-2 text-sky-400">Arah</th>
-                                <th class="py-2 px-2 text-amber-400">Kec.</th>
-                                <th class="py-2 px-1.5 text-center">Aksi</th>
+                                <th class="py-2 px-2 text-amber-400">Kec(kt)</th>
+                                <th class="py-2 px-1.5 text-center"></th>
                             </tr>
                         </thead>
-                        <tbody id="plotting-table-body" class="divide-y divide-slate-800/70 font-mono">
-                            <!-- Rows injected by JS -->
-                        </tbody>
+                        <tbody id="plotting-table-body" class="divide-y divide-slate-800/70"></tbody>
                     </table>
                 </div>
             </div>
-
         </section>
 
         <!-- ========================================================= -->
-        <!-- TAB 3: SANDI PILOT & LAPORAN (MOBILE OPTIMIZED)           -->
+        <!-- TAB 3: SANDI PILOT FM 32, GRAFIK & EKSPOR                 -->
         <!-- ========================================================= -->
-        <section id="tab-report" class="hidden space-y-3">
-            
-            <!-- Sandi PILOT FM 32 Box -->
-            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-3.5 shadow-lg print-card space-y-3">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                    <div>
-                        <h2 class="font-bold text-sm text-white flex items-center gap-1.5">
-                            <i class="fa-solid fa-terminal text-sky-400 no-print"></i>
-                            <span>Sandi PILOT (FM 32)</span>
-                        </h2>
-                        <p class="text-[10px] text-slate-400">Interpolasi otomatis lapisan standar</p>
+        <section id="tab-report" class="hidden space-y-3.5">
+
+            <!-- Sandi PILOT FM 32 Generator Card -->
+            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3 print-card">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-emerald-400"></i>
+                        <h2 class="font-bold text-sm text-white">Sandi PILOT (FM 32) Otomatis</h2>
                     </div>
+                    <span class="text-[10px] font-mono bg-navy-950 text-sky-400 px-2 py-0.5 rounded border border-slate-800">PPAA / PPBB</span>
                 </div>
 
-                <textarea id="pilot-code-output" readonly rows="4" class="w-full bg-navy-950 border border-slate-700 rounded-xl p-3 font-mono text-xs font-bold text-emerald-400 tracking-wider leading-relaxed focus:outline-none print-card"></textarea>
+                <textarea id="pilot-code-output" rows="4" readonly class="w-full bg-navy-950 border border-slate-700 rounded-xl p-3 font-mono text-xs sm:text-sm font-bold text-emerald-400 leading-relaxed focus:outline-none"></textarea>
 
-                <!-- Quick Mobile Share & Copy Buttons -->
-                <div class="grid grid-cols-2 gap-2 no-print">
-                    <button onclick="copyPilotCode()" class="bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-xs py-3 px-3 rounded-xl shadow flex items-center justify-center gap-1.5">
-                        <i class="fa-regular fa-copy"></i>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 no-print">
+                    <button onclick="copyPilotCode()" class="bg-sky-500 hover:bg-sky-400 text-navy-950 font-extrabold text-xs py-2.5 px-3 rounded-xl shadow flex items-center justify-center gap-1.5 transition">
+                        <i class="fa-solid fa-copy"></i>
                         <span>Salin Sandi</span>
                     </button>
-                    <button onclick="shareToWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs py-3 px-3 rounded-xl shadow flex items-center justify-center gap-1.5">
+                    <button onclick="shareToWhatsApp()" class="bg-emerald-500 hover:bg-emerald-400 text-navy-950 font-extrabold text-xs py-2.5 px-3 rounded-xl shadow flex items-center justify-center gap-1.5 transition">
                         <i class="fa-brands fa-whatsapp text-sm"></i>
                         <span>Kirim WA</span>
                     </button>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2 no-print">
-                    <button onclick="exportToCSV()" class="bg-navy-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-file-excel"></i>
+                    <button onclick="exportToCSV()" class="bg-navy-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition">
+                        <i class="fa-solid fa-file-csv"></i>
                         <span>Unduh CSV</span>
                     </button>
-                    <button onclick="window.print()" class="bg-navy-800 hover:bg-slate-700 text-sky-400 border border-slate-700 font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5">
+                    <button onclick="window.print()" class="bg-navy-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition">
                         <i class="fa-solid fa-print"></i>
                         <span>Cetak PDF</span>
                     </button>
                 </div>
-
-                <!-- Standard Levels Table -->
-                <div>
-                    <h4 class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Lapisan Ketinggian Standar</h4>
-                    <div class="overflow-x-auto rounded-xl border border-slate-800">
-                        <table class="w-full text-left border-collapse text-[11px]">
-                            <thead>
-                                <tr class="bg-navy-950 text-slate-400 border-b border-slate-800 font-bold uppercase text-[9px]">
-                                    <th class="py-1.5 px-2">Lapisan</th>
-                                    <th class="py-1.5 px-2">Tinggi</th>
-                                    <th class="py-1.5 px-2">Arah</th>
-                                    <th class="py-1.5 px-2">Kec.</th>
-                                    <th class="py-1.5 px-2">Sandi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="standard-levels-body" class="divide-y divide-slate-800/70 font-mono">
-                                <!-- Injected by JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
 
-            <!-- Vertical Wind Profile Chart -->
-            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-3.5 shadow-lg print-card flex flex-col">
-                <div class="border-b border-slate-800 pb-2 mb-2.5">
-                    <h3 class="font-bold text-sm text-white flex items-center gap-1.5">
-                        <i class="fa-solid fa-chart-line text-sky-400 no-print"></i>
-                        <span>Profil Angin Vertikal</span>
+            <!-- Standard Aviation Levels Table -->
+            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5 print-card">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-xs text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-amber-400"></i>
+                        <span>Lapisan Ketinggian Standar (Reporting Levels)</span>
                     </h3>
                 </div>
-                <div class="relative h-[240px] w-full bg-navy-950 rounded-xl border border-slate-800 p-1.5 print-card">
-                    <canvas id="wind-profile-canvas" class="w-full h-full block"></canvas>
-                </div>
-            </div>
-
-            <!-- Minute Summary Copy -->
-            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-3.5 shadow-lg print-card">
-                <div class="border-b border-slate-800 pb-2 mb-2.5">
-                    <h3 class="font-bold text-sm text-white flex items-center gap-1.5">
-                        <i class="fa-solid fa-list-check text-emerald-400 no-print"></i>
-                        <span>Rekap Per Menit</span>
-                    </h3>
-                </div>
-                <div class="overflow-x-auto max-h-[260px] overflow-y-auto rounded-xl border border-slate-800">
-                    <table class="w-full text-left border-collapse text-[11px]">
-                        <thead class="sticky top-0 bg-navy-950">
-                            <tr class="text-slate-400 border-b border-slate-800 font-bold uppercase text-[9px]">
-                                <th class="py-1.5 px-2">Mnt</th>
-                                <th class="py-1.5 px-2">Tinggi</th>
-                                <th class="py-1.5 px-2">Az / El</th>
-                                <th class="py-1.5 px-2">Arah</th>
-                                <th class="py-1.5 px-2">Kec.</th>
+                <div class="overflow-x-auto rounded-xl border border-slate-800">
+                    <table class="w-full text-left border-collapse font-mono text-[11px]">
+                        <thead>
+                            <tr class="bg-navy-950 text-slate-400 border-b border-slate-800 text-[10px]">
+                                <th class="py-2 px-2.5">Lapisan</th>
+                                <th class="py-2 px-2.5">Tinggi</th>
+                                <th class="py-2 px-2.5 text-sky-400">Arah</th>
+                                <th class="py-2 px-2.5 text-amber-400">Kec</th>
+                                <th class="py-2 px-2.5 text-emerald-400">ddfff</th>
                             </tr>
                         </thead>
-                        <tbody id="report-minute-summary-body" class="divide-y divide-slate-800/70 font-mono">
-                            <!-- Injected by JS -->
-                        </tbody>
+                        <tbody id="standard-levels-body" class="divide-y divide-slate-800/70"></tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- Vertical Wind Profile Chart -->
+            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2 no-print">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-xs text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-line text-sky-400"></i>
+                        <span>Profil Angin Vertikal & Vektor Arah</span>
+                    </h3>
+                    <span class="text-[10px] text-slate-400">Kecepatan (kt) vs Tinggi (m)</span>
+                </div>
+                <div class="w-full h-64 bg-navy-950 border border-slate-800 rounded-xl p-2">
+                    <canvas id="wind-profile-canvas" class="w-full h-full block"></canvas>
+                </div>
+            </div>
+
+            <!-- Riwayat Pengamatan Sebelumnya (3 Sesi Terakhir) -->
+            <div class="bg-navy-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3 no-print">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-sky-400"></i>
+                        <h3 class="font-bold text-xs text-white">Riwayat Pengamatan (3 Sesi Terakhir)</h3>
+                    </div>
+                    <span class="text-[10px] text-slate-400">Otomatis tersimpan</span>
+                </div>
+                <div id="history-list-container" class="space-y-2">
+                    <p class="text-xs text-slate-500 text-center py-3">Belum ada riwayat sesi yang diselesaikan.</p>
+                </div>
+            </div>
         </section>
 
     </main>
 
-    <!-- Custom Modal Confirmation (No native confirm/alert) -->
-    <div id="custom-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4 no-print">
-        <div class="bg-navy-900 border border-slate-700 rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-triangle-exclamation text-lg"></i>
-                </div>
-                <div>
-                    <h3 id="modal-title" class="font-bold text-base text-white">Konfirmasi</h3>
-                    <p id="modal-message" class="text-xs text-slate-300 mt-0.5">Apakah Anda yakin?</p>
-                </div>
-            </div>
-            <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-navy-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">Batal</button>
-                <button id="modal-confirm-btn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition">Ya, Lanjutkan</button>
+    <!-- Custom Confirmation Modal -->
+    <div id="custom-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm items-center justify-center p-4 no-print">
+        <div class="bg-navy-900 border border-slate-700 rounded-2xl max-w-xs w-full p-5 shadow-2xl space-y-4">
+            <h3 id="modal-title" class="text-base font-extrabold text-white">Konfirmasi</h3>
+            <p id="modal-message" class="text-xs text-slate-300 leading-relaxed"></p>
+            <div class="grid grid-cols-2 gap-2 pt-1">
+                <button onclick="closeModal()" class="py-2.5 px-3 rounded-xl bg-navy-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition">Batal</button>
+                <button id="modal-confirm-btn" class="py-2.5 px-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-extrabold text-xs transition">Ya, Lanjutkan</button>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
     <footer class="bg-navy-900 border-t border-slate-800 py-3 px-4 text-center text-[11px] text-slate-500 no-print">
-        <p>PIBAL KEEP 2.0 &bull; Operasional Pengamatan Udara Atas &bull; <span class="text-slate-400 font-semibold">Stasiun Meteorologi Sultan Muhammad Salahuddin Bima</span></p>
+        <p>PIBAL-RM BIMA &bull; Operasional Pengamatan Udara Atas &bull; <span class="text-slate-400 font-semibold">Stasiun Meteorologi Sultan Muhammad Salahuddin Bima</span></p>
     </footer>
 
     <!-- Application Logic -->
     <script>
         // =========================================================================
-        // 1. STATE MANAGEMENT & INITIALIZATION
+        // 1. PWA MANIFEST, SVG ICON & OFFLINE SERVICE WORKER SETUP
         // =========================================================================
-        let readings = []; // Array of { minute, azimuth, elevation }
-        let computedRows = []; // Array of calculated trigonometric & wind data
-        
-        // Timer State
-        let timerInterval = null;
-        let elapsedSeconds = 0;
-        let isTimerRunning = false;
-        let audioEnabled = true;
-        let audioCtx = null;
+        let deferredPrompt = null;
 
-        // Numpad & Field Input State
-        let recordMode = 'auto'; // 'auto' | 'manual'
-        let activeInputField = 'azimuth'; // 'azimuth' | 'elevation'
-        let editingMinute = 1;
-        let currentInputs = {
-            azimuth: '',
-            elevation: ''
-        };
+        function initPWA() {
+            const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <defs>
+                    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#0b1528"/>
+                        <stop offset="100%" stop-color="#0ea5e9"/>
+                    </linearGradient>
+                </defs>
+                <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+                <circle cx="256" cy="200" r="115" fill="#f59e0b"/>
+                <path d="M236 312 L276 312 L266 342 L246 342 Z" fill="#e2e8f0"/>
+                <line x1="256" y1="342" x2="256" y2="395" stroke="#94a3b8" stroke-width="6"/>
+                <rect x="234" y="395" width="44" height="32" rx="6" fill="#38bdf8"/>
+                <text x="256" y="476" font-family="sans-serif" font-weight="bold" font-size="38" fill="#ffffff" text-anchor="middle">PIBAL-RM</text>
+            </svg>`;
+            const iconUrl = 'data:image/svg+xml;base64,' + btoa(svgIcon);
 
-        // Sensor & Low-Pass Smoothing State
-        let rawSensor = { az: 0, pitch: 0, roll: 0 };
-        let offsetSensor = { az: 0, pitch: 0, roll: 0 };
-        let smoothedSensor = { az: 0, el: 0, pitch: 0, roll: 0 };
-        let sensorEventReceived = false;
-        let sensorCheckTimeout = null;
-        let activeOrientationSensor = null;
-        const SMOOTHING_ALPHA = 0.25; // Low-pass filter factor
-
-        // Initialize on Window Load
-        window.onload = function() {
-            initPWASetup();
-            initDateTime();
-            loadFromLocalStorage();
-            setRecordMode('auto');
-            updateNumpadUI();
-            recalculateAll();
-            startClocks();
-            checkSensorSecurityContext();
-        };
-
-        // =========================================================================
-        // 1B. PWA MANIFEST, APP ICON, SERVICE WORKER & INSTALL PROMPT
-        // =========================================================================
-        let deferredInstallPrompt = null;
-
-        function initPWASetup() {
-            // Generate crisp official SVG icon for Home Screen & Splash Screen
-            const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0b1528"/><stop offset="100%" stop-color="#0ea5e9"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#bg)"/><circle cx="256" cy="200" r="88" fill="#f59e0b"/><path d="M256 288 L236 335 L276 335 Z" fill="#f59e0b"/><path d="M256 335 Q256 385 242 425" stroke="#38bdf8" stroke-width="10" fill="none" stroke-linecap="round"/><text x="256" y="472" font-family="sans-serif" font-weight="800" font-size="44" fill="#ffffff" text-anchor="middle" letter-spacing="3">PIBAL BIMA</text></svg>`;
-            const iconDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgIcon);
-
-            const iconEl = document.getElementById('pwa-icon');
             const appleIconEl = document.getElementById('pwa-apple-icon');
-            if (iconEl) iconEl.href = iconDataUrl;
-            if (appleIconEl) appleIconEl.href = iconDataUrl;
+            if (appleIconEl) appleIconEl.href = iconUrl;
 
-            // Inject Web App Manifest dynamically (single-file friendly for GitHub + Netlify)
             const manifestObj = {
-                name: 'PIBAL KEEP 2.0 - Stamet Bima',
-                short_name: 'PIBAL Bima',
-                description: 'Aplikasi Pencatatan Data PIBAL Otomatis - Stasiun Meteorologi Sultan Muhammad Salahuddin Bima',
+                name: 'PIBAL-RM BIMA - Stamet Sultan Muhammad Salahuddin Bima',
+                short_name: 'PIBAL-RM BIMA',
+                description: 'Aplikasi Pencatatan Data Pengamatan Udara Atas (PIBAL) Stasiun Meteorologi Sultan Muhammad Salahuddin Bima',
                 start_url: './',
-                scope: './',
                 display: 'standalone',
-                orientation: 'portrait',
                 background_color: '#060c18',
                 theme_color: '#0b1528',
+                orientation: 'portrait',
                 icons: [
-                    { src: iconDataUrl, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
-                    { src: iconDataUrl, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+                    { src: iconUrl, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+                    { src: iconUrl, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
                 ]
             };
-            const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
-            const manifestEl = document.getElementById('pwa-manifest');
-            if (manifestEl) manifestEl.href = URL.createObjectURL(manifestBlob);
 
-            // Register inline Service Worker for Offline Caching
-            if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+            const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+            const manifestUrl = URL.createObjectURL(manifestBlob);
+            const manifestEl = document.getElementById('pwa-manifest');
+            if (manifestEl) manifestEl.href = manifestUrl;
+
+            if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
                 const swCode = `
-                    const CACHE_NAME = 'pibal-bima-v2';
-                    self.addEventListener('install', e => {
-                        self.skipWaiting();
-                        e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['./'])));
-                    });
-                    self.addEventListener('activate', e => {
-                        e.waitUntil(self.clients.claim());
-                    });
-                    self.addEventListener('fetch', e => {
+                    const CACHE_NAME = 'pibal-rm-bima-v2';
+                    self.addEventListener('install', (e) => self.skipWaiting());
+                    self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
+                    self.addEventListener('fetch', (e) => {
                         e.respondWith(
                             fetch(e.request).then(res => {
-                                const copy = res.clone();
-                                caches.open(CACHE_NAME).then(c => c.put(e.request, copy));
+                                const resClone = res.clone();
+                                caches.open(CACHE_NAME).then(cache => cache.put(e.request, resClone));
                                 return res;
                             }).catch(() => caches.match(e.request))
                         );
                     });
                 `;
                 const swBlob = new Blob([swCode], { type: 'application/javascript' });
-                navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+                const swUrl = URL.createObjectURL(swBlob);
+                navigator.serviceWorker.register(swUrl).catch(() => {});
+            }
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                const card = document.getElementById('install-app-card');
+                if (card) card.classList.remove('hidden');
+            });
+
+            window.addEventListener('appinstalled', () => {
+                deferredPrompt = null;
+                const card = document.getElementById('install-app-card');
+                if (card) card.classList.add('hidden');
+                showToast('Aplikasi PIBAL-RM BIMA berhasil terpasang di HP!', 'success');
+            });
+
+            // Hide install card if already running in standalone app mode
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+                const card = document.getElementById('install-app-card');
+                if (card) card.classList.add('hidden');
             }
         }
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredInstallPrompt = e;
-            const installBtn = document.getElementById('btn-install-pwa');
-            if (installBtn) {
-                installBtn.classList.remove('hidden');
-            }
-        });
-
-        window.addEventListener('appinstalled', () => {
-            deferredInstallPrompt = null;
-            const installBtn = document.getElementById('btn-install-pwa');
-            if (installBtn) installBtn.classList.add('hidden');
-            showToast('Aplikasi PIBAL Bima berhasil terpasang di layar utama!', 'success');
-        });
-
-        function installPWAApp() {
-            if (deferredInstallPrompt) {
-                deferredInstallPrompt.prompt();
-                deferredInstallPrompt.userChoice.then(() => {
-                    deferredInstallPrompt = null;
-                });
+        async function installPWAApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    deferredPrompt = null;
+                    const card = document.getElementById('install-app-card');
+                    if (card) card.classList.add('hidden');
+                }
             } else {
                 showToast('Ketuk titik tiga (⋮) di pojok kanan atas Chrome lalu pilih "Tambahkan ke Layar Utama" / "Install app".', 'info');
             }
         }
 
         // =========================================================================
-        // 2. DATE, TIME & SYNOPTIC SCHEDULE HELPERS
+        // 2. STATE MANAGEMENT & SCREEN WAKE LOCK API (KEEP SCREEN AWAKE)
+        // =========================================================================
+        let readings = [];
+        let computedRows = [];
+        let isSessionCompleted = false;
+
+        let timerInterval = null;
+        let elapsedSeconds = 0;
+        let isTimerRunning = false;
+        let audioEnabled = true;
+        let audioCtx = null;
+
+        let wakeLockSentinel = null;
+        let keepAwakeDesired = true;
+
+        let recordMode = 'auto';
+        let activeInputField = 'azimuth';
+        let editingMinute = 1;
+        let currentInputs = { azimuth: '', elevation: '' };
+
+        let sensorActive = false;
+        let lockedSensorSource = null; // Lock to one reliable sensor stream to prevent conflict on Samsung
+        let rawSensor = { az: 0, pitch: 0, roll: 0 };
+        let offsetSensor = { az: 0, pitch: 0, roll: 0 };
+        let smoothedSensor = { az: 0, el: 0, pitch: 0, roll: 0 };
+        const SMOOTHING_ALPHA = 0.15; // Stronger damping for noisy mobile MEMS sensors
+        const STANDARD_ASCENT_RATE = 150; // Standar operasional 150 m/menit
+
+        window.onload = function() {
+            initPWA();
+            initTheme();
+            initDateTime();
+            loadFromLocalStorage();
+            renderHistoryList();
+            setRecordMode('auto');
+            updateNumpadUI();
+            recalculateAll();
+            startClocks();
+            requestScreenWakeLock(false);
+        };
+
+        // =========================================================================
+        // 3. DAYLIGHT / NIGHT THEME & SCREEN WAKE LOCK
+        // =========================================================================
+        function initTheme() {
+            const savedTheme = localStorage.getItem('pibal_rm_bima_theme') || 'light';
+            applyTheme(savedTheme);
+        }
+
+        function toggleOutdoorTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const nextTheme = isDark ? 'light' : 'dark';
+            localStorage.setItem('pibal_rm_bima_theme', nextTheme);
+            applyTheme(nextTheme);
+            drawWindProfileChart();
+        }
+
+        function applyTheme(theme) {
+            const htmlEl = document.documentElement;
+            const iconEl = document.getElementById('theme-toggle-icon');
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+
+            if (theme === 'dark') {
+                htmlEl.classList.add('dark');
+                if (iconEl) iconEl.className = 'fa-solid fa-moon text-xs text-sky-400';
+                if (metaTheme) metaTheme.setAttribute('content', '#0b1528');
+            } else {
+                htmlEl.classList.remove('dark');
+                if (iconEl) iconEl.className = 'fa-solid fa-sun text-xs text-amber-500';
+                if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+            }
+        }
+
+        async function requestScreenWakeLock(showNotification = true) {
+            if (!keepAwakeDesired) return;
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLockSentinel = await navigator.wakeLock.request('screen');
+                    updateWakeLockUI(true);
+                    wakeLockSentinel.addEventListener('release', () => {
+                        updateWakeLockUI(false);
+                    });
+                    if (showNotification) showToast('Layar dikunci agar tetap menyala.', 'success');
+                }
+            } catch (e) {
+                updateWakeLockUI(false);
+            }
+        }
+
+        async function toggleWakeLockManual() {
+            if (wakeLockSentinel) {
+                keepAwakeDesired = false;
+                await wakeLockSentinel.release();
+                wakeLockSentinel = null;
+                updateWakeLockUI(false);
+                showToast('Kunci layar dimatikan.', 'info');
+            } else {
+                keepAwakeDesired = true;
+                await requestScreenWakeLock(true);
+            }
+        }
+
+        function updateWakeLockUI(isActive) {
+            const badge = document.getElementById('wakelock-badge');
+            const dot = document.getElementById('wakelock-dot');
+            const text = document.getElementById('wakelock-text');
+            if (!badge || !dot || !text) return;
+
+            if (isActive) {
+                badge.className = 'h-8 px-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center gap-1.5 transition';
+                dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+                text.textContent = 'ON';
+                text.className = 'text-[10px] font-extrabold text-amber-400 tracking-wide';
+            } else {
+                badge.className = 'h-8 px-2.5 rounded-xl bg-slate-800/50 border border-slate-700 flex items-center gap-1.5 transition';
+                dot.className = 'w-2 h-2 rounded-full bg-slate-500';
+                text.textContent = 'OFF';
+                text.className = 'text-[10px] font-bold text-slate-400 tracking-wide';
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && keepAwakeDesired) {
+                requestScreenWakeLock(false);
+            }
+        });
+
+        // =========================================================================
+        // 4. DATE, UTC/WITA CLOCKS & SYNOPTIC HOUR AUTO-DETECT
         // =========================================================================
         function initDateTime() {
             const now = new Date();
             const yyyy = now.getUTCFullYear();
             const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
             const dd = String(now.getUTCDate()).padStart(2, '0');
-            document.getElementById('obs-date').value = `${yyyy}-${mm}-${dd}`;
-            autoDetectSynoptic(true);
+            const dateInput = document.getElementById('obs-date');
+            if (dateInput && !dateInput.value) {
+                dateInput.value = `${yyyy}-${mm}-${dd}`;
+            }
+            autoDetectSynoptic(false);
         }
 
-        function autoDetectSynoptic(silent = false) {
+        function autoDetectSynoptic(notify = true) {
             const now = new Date();
             const utcHour = now.getUTCHours();
-            let synoptic = '00';
-            if (utcHour >= 22 || utcHour < 4) synoptic = '00';
-            else if (utcHour >= 4 && utcHour < 10) synoptic = '06';
-            else if (utcHour >= 10 && utcHour < 16) synoptic = '12';
-            else synoptic = '18';
+            const synopticHours = [0, 6, 12, 18];
+            let nearest = 0;
+            let minDiff = 24;
 
-            document.getElementById('obs-hour').value = synoptic;
-            if (!silent) {
-                showToast(`Jadwal pengamatan otomatis dipilih: ${synoptic} UTC`, 'info');
+            synopticHours.forEach(h => {
+                let diff = Math.abs(utcHour - h);
+                if (diff > 12) diff = 24 - diff;
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    nearest = h;
+                }
+            });
+
+            const hourSelect = document.getElementById('obs-hour');
+            if (hourSelect) {
+                hourSelect.value = String(nearest).padStart(2, '0');
+                saveToLocalStorage();
+                recalculateAll();
+                if (notify) showToast(`Jam sinoptik otomatis diatur ke ${hourSelect.value} UTC.`, 'info');
             }
-            generatePilotCodeAndReport();
         }
 
         function startClocks() {
-            function tick() {
+            const updateClocks = () => {
                 const now = new Date();
                 const utcH = String(now.getUTCHours()).padStart(2, '0');
                 const utcM = String(now.getUTCMinutes()).padStart(2, '0');
                 const utcS = String(now.getUTCSeconds()).padStart(2, '0');
-                document.getElementById('clock-utc').textContent = `${utcH}:${utcM}:${utcS} UTC`;
 
-                // WITA = UTC + 8
                 const witaTime = new Date(now.getTime() + 8 * 3600 * 1000);
                 const witaH = String(witaTime.getUTCHours()).padStart(2, '0');
                 const witaM = String(witaTime.getUTCMinutes()).padStart(2, '0');
                 const witaS = String(witaTime.getUTCSeconds()).padStart(2, '0');
-                document.getElementById('clock-wita').textContent = `${witaH}:${witaM}:${witaS} WITA`;
-            }
-            tick();
-            setInterval(tick, 1000);
-        }
 
-        function updateAscentRateByBalloon() {
-            const weight = document.getElementById('balloon-weight').value;
-            const rateInput = document.getElementById('ascent-rate');
-            if (weight === '30') {
-                rateInput.value = 150;
-            } else if (weight === '100') {
-                rateInput.value = 300;
-            }
-            recalculateAll();
+                const utcEl = document.getElementById('clock-utc');
+                const witaEl = document.getElementById('clock-wita');
+                if (utcEl) utcEl.textContent = `${utcH}:${utcM}:${utcS} UTC`;
+                if (witaEl) witaEl.textContent = `${witaH}:${witaM}:${witaS} WITA`;
+            };
+            updateClocks();
+            setInterval(updateClocks, 1000);
         }
 
         // =========================================================================
-        // 3. TAB NAVIGATION
+        // 5. TAB NAVIGATION & BALLOON PARAMETERS
         // =========================================================================
         function switchTab(tabName) {
             const tabs = ['setup', 'observe', 'report'];
             tabs.forEach(t => {
-                const section = document.getElementById(`tab-${t}`);
+                const sec = document.getElementById(`tab-${t}`);
                 const btn = document.getElementById(`tab-btn-${t}`);
+                if (!sec || !btn) return;
+
                 if (t === tabName) {
-                    section.classList.remove('hidden');
-                    btn.className = 'tab-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all bg-sky-500 text-navy-950 shadow';
+                    sec.classList.remove('hidden');
+                    btn.className = 'tab-btn flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-extrabold transition-all bg-sky-500 text-navy-950 shadow-md';
                 } else {
-                    section.classList.add('hidden');
-                    btn.className = 'tab-btn flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:bg-navy-800 hover:text-white';
+                    sec.classList.add('hidden');
+                    btn.className = 'tab-btn flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:bg-navy-800 hover:text-white';
                 }
             });
 
@@ -827,221 +1007,342 @@
             }
         }
 
-        // =========================================================================
-        // 4. ANDROID SENSOR ENGINE (GENERIC SENSOR API + ORIENTATION + MOTION)
-        // =========================================================================
-        function checkSensorSecurityContext() {
-            const diagEl = document.getElementById('sensor-diag-msg');
-            if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-                diagEl.textContent = '⚠️ Web wajib dibuka via HTTPS agar Chrome Android mengizinkan akses sensor.';
-                diagEl.classList.remove('hidden');
-            }
+        function updateAscentRateByBalloon() {
+            const weight = document.getElementById('balloon-weight').value;
+            const rateInput = document.getElementById('ascent-rate');
+            if (weight === '30') rateInput.value = 150;
+            else if (weight === '100') rateInput.value = 180;
+            saveToLocalStorage();
+            updateNumpadUI();
+            recalculateAll();
         }
 
-        function smoothAngle(prev, next, alpha) {
-            let diff = ((next - prev + 540) % 360) - 180;
-            return (prev + alpha * diff + 360) % 360;
-        }
-
-        function processSensorData(alpha, beta, gamma, sourceLabel = 'Sensor Android') {
-            sensorEventReceived = true;
+        // =========================================================================
+        // 6. DIGITAL WATERPASS & MULTI-SENSOR ANDROID (ANTI-JITTER LOCKED)
+        // =========================================================================
+        async function activateRealSensors() {
             const badge = document.getElementById('sensor-status-badge');
-            if (badge && badge.textContent !== 'AKTIF') {
-                badge.textContent = 'AKTIF';
-                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400';
-            }
-            const diagEl = document.getElementById('sensor-diag-msg');
-            if (diagEl && !diagEl.classList.contains('hidden')) {
-                diagEl.classList.add('hidden');
-            }
+            const diag = document.getElementById('sensor-source-diag');
+            lockedSensorSource = null; // Reset source lock on activation
 
-            rawSensor.az = (alpha !== null && !isNaN(alpha)) ? alpha : rawSensor.az;
-            rawSensor.pitch = (beta !== null && !isNaN(beta)) ? beta : rawSensor.pitch;
-            rawSensor.roll = (gamma !== null && !isNaN(gamma)) ? gamma : rawSensor.roll;
+            try {
+                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    const res = await DeviceOrientationEvent.requestPermission();
+                    if (res !== 'granted') {
+                        showToast('Izin sensor ditolak oleh browser.', 'error');
+                        return;
+                    }
+                }
 
-            const debugEl = document.getElementById('raw-sensor-debug');
-            if (debugEl) {
-                debugEl.textContent = `${sourceLabel} | Raw: ${rawSensor.az.toFixed(0)}°, ${rawSensor.pitch.toFixed(1)}°, ${rawSensor.roll.toFixed(1)}°`;
-            }
+                // Clean previous listeners if re-activated
+                window.removeEventListener('deviceorientationabsolute', handleOrientationEvent, true);
+                window.removeEventListener('deviceorientation', handleOrientationEvent, true);
+                window.removeEventListener('devicemotion', handleMotionFallback, true);
 
-            // Apply Zero Calibration Offsets
-            let calAz = (rawSensor.az - offsetSensor.az + 360) % 360;
-            let calPitch = rawSensor.pitch - offsetSensor.pitch;
-            let calRoll = rawSensor.roll - offsetSensor.roll;
+                window.addEventListener('deviceorientationabsolute', handleOrientationEvent, true);
+                window.addEventListener('deviceorientation', handleOrientationEvent, true);
+                window.addEventListener('devicemotion', handleMotionFallback, true);
 
-            // Clamp Elevation between 0 and 90 degrees
-            let calEl = Math.max(0.1, Math.min(90, Math.abs(calPitch)));
-
-            // Apply Low-Pass Filter to eliminate hand/wind jitter
-            smoothedSensor.az = smoothAngle(smoothedSensor.az, calAz, SMOOTHING_ALPHA);
-            smoothedSensor.el = smoothedSensor.el + SMOOTHING_ALPHA * (calEl - smoothedSensor.el);
-            smoothedSensor.pitch = smoothedSensor.pitch + SMOOTHING_ALPHA * (calPitch - smoothedSensor.pitch);
-            smoothedSensor.roll = smoothedSensor.roll + SMOOTHING_ALPHA * (calRoll - smoothedSensor.roll);
-
-            updateWaterpassUI(smoothedSensor.az, smoothedSensor.pitch, smoothedSensor.roll, smoothedSensor.el);
-        }
-
-        function updateWaterpassUI(az, pitch, roll, el) {
-            document.getElementById('sensor-azimuth').textContent = az.toFixed(1) + '°';
-            document.getElementById('sensor-pitch').textContent = pitch.toFixed(1) + '°';
-            document.getElementById('sensor-roll').textContent = roll.toFixed(1) + '°';
-
-            // Update Tab 2 Auto-Capture Live Displays
-            const liveAzEl = document.getElementById('live-auto-az');
-            const liveElEl = document.getElementById('live-auto-el');
-            if (liveAzEl) liveAzEl.textContent = az.toFixed(1) + '°';
-            if (liveElEl) liveElEl.textContent = el.toFixed(1) + '°';
-
-            // Clamp bubble movement within radius of 38px for compact mobile circle
-            const maxOffset = 38;
-            const xOffset = Math.max(-maxOffset, Math.min(maxOffset, roll * 1.8));
-            const yOffset = Math.max(-maxOffset, Math.min(maxOffset, pitch * 1.8));
-
-            const bubble = document.getElementById('waterpass-bubble');
-            bubble.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-
-            const dist = Math.sqrt(pitch * pitch + roll * roll);
-            const statusText = document.getElementById('level-indicator-text');
-            if (dist <= 1.5) {
-                statusText.textContent = 'POSISI DATAR (LEVEL OK)';
-                statusText.className = 'text-[11px] font-bold text-emerald-400';
-                bubble.className = 'w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-300 shadow-md absolute transition-transform duration-75 ease-out border border-white/40';
-            } else {
-                statusText.textContent = `MIRING (${dist.toFixed(1)}°) - SESUAIKAN`;
-                statusText.className = 'text-[11px] font-bold text-amber-400';
-                bubble.className = 'w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-300 shadow-md absolute transition-transform duration-75 ease-out border border-white/40';
+                sensorActive = true;
+                if (badge) {
+                    badge.textContent = 'AKTIF';
+                    badge.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                }
+                if (diag) diag.textContent = 'Sumber Sensor: Mengkalibrasi Sensor HP...';
+                showToast('Sensor HP diaktifkan! Letakkan datar lalu tekan Set Nol.', 'success');
+            } catch (err) {
+                showToast('Gagal mengakses sensor HP. Pastikan akses via HTTPS.', 'error');
             }
         }
 
-        function calibrateZeroOffset() {
-            offsetSensor.az = rawSensor.az;
-            offsetSensor.pitch = rawSensor.pitch;
-            offsetSensor.roll = rawSensor.roll;
-            smoothedSensor.az = 0;
-            smoothedSensor.pitch = 0;
-            smoothedSensor.roll = 0;
-            smoothedSensor.el = 0;
-            document.getElementById('calibration-info').textContent = `Offset: Az ${offsetSensor.az.toFixed(1)}° | Pitch ${offsetSensor.pitch.toFixed(1)}° | Roll ${offsetSensor.roll.toFixed(1)}°`;
-            updateWaterpassUI(0, 0, 0, 0);
-            playBeep(1046.5, 0.12);
-            showToast('Kalibrasi Set Nol (0.0°) berhasil diterapkan!', 'success');
-        }
+        function handleOrientationEvent(e) {
+            if (e.alpha === null && e.beta === null && e.gamma === null) return;
+            const currentType = e.absolute ? 'deviceorientationabsolute' : 'deviceorientation';
 
-        function quaternionToEuler(q) {
-            // q = [x, y, z, w] from Android AbsoluteOrientationSensor
-            const [x, y, z, w] = q;
-            const sinr_cosp = 2 * (w * x + y * z);
-            const cosr_cosp = 1 - 2 * (x * x + y * y);
-            const pitch = Math.atan2(sinr_cosp, cosr_cosp) * (180 / Math.PI);
-
-            const sinp = 2 * (w * y - z * x);
-            const roll = (Math.abs(sinp) >= 1 ? Math.sign(sinp) * (Math.PI / 2) : Math.asin(sinp)) * (180 / Math.PI);
-
-            const siny_cosp = 2 * (w * z + x * y);
-            const cosy_cosp = 1 - 2 * (y * y + z * z);
-            const yaw = Math.atan2(siny_cosp, cosy_cosp) * (180 / Math.PI);
-            const compass = (360 - yaw) % 360;
-
-            return { compass, pitch, roll };
-        }
-
-        function handleOrientationEvent(event) {
-            if (event.alpha === null && event.beta === null && event.gamma === null) return;
-            let compassHeading = rawSensor.az;
-            if (typeof event.webkitCompassHeading === 'number' && !isNaN(event.webkitCompassHeading)) {
-                compassHeading = event.webkitCompassHeading;
-            } else if (typeof event.alpha === 'number' && !isNaN(event.alpha)) {
-                compassHeading = (360 - event.alpha) % 360;
+            // Lock to deviceorientationabsolute if available, otherwise standard deviceorientation
+            if (!lockedSensorSource || lockedSensorSource === 'devicemotion') {
+                lockedSensorSource = currentType;
+            } else if (lockedSensorSource === 'deviceorientation' && currentType === 'deviceorientationabsolute') {
+                lockedSensorSource = 'deviceorientationabsolute';
+            } else if (lockedSensorSource !== currentType) {
+                return; // Ignore conflicting secondary stream
             }
-            const tag = event.absolute ? 'OrientationAbsolute' : 'DeviceOrientation';
-            processSensorData(compassHeading, event.beta, event.gamma, tag);
+
+            let heading = 0;
+            if (typeof e.webkitCompassHeading === 'number') {
+                heading = e.webkitCompassHeading;
+            } else if (e.alpha !== null) {
+                heading = (360 - e.alpha) % 360;
+            }
+            const pitch = e.beta || 0;
+            const roll = e.gamma || 0;
+            const src = e.absolute ? 'Compass Absolute' : 'Gyro Orientation';
+            processSensorData(heading, pitch, roll, src);
         }
 
-        function handleMotionFallback(event) {
-            const acc = event.accelerationIncludingGravity;
-            if (!acc || (acc.x === null && acc.y === null && acc.z === null)) return;
-            const x = acc.x || 0;
-            const y = acc.y || 0;
-            const z = acc.z || 0;
-            const pitch = Math.atan2(y, Math.sqrt(x * x + z * z)) * (180 / Math.PI);
-            const roll = Math.atan2(-x, z) * (180 / Math.PI);
+        function handleMotionFallback(e) {
+            // Only use accelerometer if orientation events never fired
+            if (lockedSensorSource && lockedSensorSource !== 'devicemotion') return;
+            const acc = e.accelerationIncludingGravity;
+            if (!acc || acc.x === null) return;
+            lockedSensorSource = 'devicemotion';
+
+            const pitch = Math.atan2(acc.y, acc.z) * (180 / Math.PI);
+            const roll = Math.atan2(-acc.x, Math.sqrt(acc.y * acc.y + acc.z * acc.z)) * (180 / Math.PI);
             processSensorData(rawSensor.az, pitch, roll, 'Accelerometer');
         }
 
-        function startAndroidGenericSensor() {
-            try {
-                if ('AbsoluteOrientationSensor' in window) {
-                    if (activeOrientationSensor) activeOrientationSensor.stop();
-                    const sensor = new AbsoluteOrientationSensor({ frequency: 30, referenceFrame: 'device' });
-                    sensor.addEventListener('reading', () => {
-                        const { compass, pitch, roll } = quaternionToEuler(sensor.quaternion);
-                        processSensorData(compass, pitch, roll, 'Android Fusion');
-                    });
-                    sensor.addEventListener('error', (err) => {
-                        console.warn('Generic sensor error:', err.error);
-                    });
-                    sensor.start();
-                    activeOrientationSensor = sensor;
-                }
-            } catch (e) {
-                console.warn('AbsoluteOrientationSensor unavailable:', e);
+        function processSensorData(az, pitch, roll, sourceName) {
+            rawSensor = { az, pitch, roll };
+
+            let calAz = (az - offsetSensor.az + 360) % 360;
+            let calPitch = pitch - offsetSensor.pitch;
+            let calRoll = roll - offsetSensor.roll;
+
+            // Elevation calculation when holding phone along sightline
+            let rawElev = Math.max(0, Math.min(90, Math.abs(calPitch)));
+
+            // Deadband anti-jitter filter (ignore micro noise < 0.25 deg)
+            let diffAz = calAz - smoothedSensor.az;
+            if (diffAz > 180) diffAz -= 360;
+            if (diffAz < -180) diffAz += 360;
+            if (Math.abs(diffAz) > 0.25) {
+                smoothedSensor.az = (smoothedSensor.az + SMOOTHING_ALPHA * diffAz + 360) % 360;
             }
+
+            const diffEl = rawElev - smoothedSensor.el;
+            if (Math.abs(diffEl) > 0.2) {
+                smoothedSensor.el = smoothedSensor.el + SMOOTHING_ALPHA * diffEl;
+            }
+
+            const diffPitch = calPitch - smoothedSensor.pitch;
+            if (Math.abs(diffPitch) > 0.2) {
+                smoothedSensor.pitch = smoothedSensor.pitch + SMOOTHING_ALPHA * diffPitch;
+            }
+
+            const diffRoll = calRoll - smoothedSensor.roll;
+            if (Math.abs(diffRoll) > 0.2) {
+                smoothedSensor.roll = smoothedSensor.roll + SMOOTHING_ALPHA * diffRoll;
+            }
+
+            updateWaterpassUI(sourceName);
         }
 
-        function bindSensorListeners() {
-            sensorEventReceived = false;
-            window.removeEventListener('deviceorientationabsolute', handleOrientationEvent, true);
-            window.removeEventListener('deviceorientation', handleOrientationEvent, true);
-            window.removeEventListener('devicemotion', handleMotionFallback, true);
+        function calibrateZeroOffset() {
+            offsetSensor = { ...rawSensor };
+            smoothedSensor = { az: 0, el: 0, pitch: 0, roll: 0 };
+            const calInfo = document.getElementById('calibration-info');
+            if (calInfo) {
+                calInfo.textContent = `Offset: ${offsetSensor.az.toFixed(1)}° / ${offsetSensor.pitch.toFixed(1)}°`;
+            }
+            updateWaterpassUI('Calibrated');
+            showToast('Kalibrasi Set Nol (0.0°) berhasil diterapkan!', 'success');
+        }
 
-            // 1. Try modern Chrome Android Generic Sensor API
-            startAndroidGenericSensor();
+        function updateWaterpassUI(sourceName) {
+            const azStr = smoothedSensor.az.toFixed(1) + '°';
+            const pitchStr = smoothedSensor.pitch.toFixed(1) + '°';
+            const rollStr = smoothedSensor.roll.toFixed(1) + '°';
+            const elStr = smoothedSensor.el.toFixed(1) + '°';
 
-            // 2. Bind standard DOM Orientation & Accelerometer Motion events
-            window.addEventListener('deviceorientationabsolute', handleOrientationEvent, true);
-            window.addEventListener('deviceorientation', handleOrientationEvent, true);
-            window.addEventListener('devicemotion', handleMotionFallback, true);
+            const azEl = document.getElementById('sensor-azimuth');
+            const pitchEl = document.getElementById('sensor-pitch');
+            const rollEl = document.getElementById('sensor-roll');
+            if (azEl) azEl.textContent = azStr;
+            if (pitchEl) pitchEl.textContent = pitchStr;
+            if (rollEl) rollEl.textContent = rollStr;
 
-            if (sensorCheckTimeout) clearTimeout(sensorCheckTimeout);
-            sensorCheckTimeout = setTimeout(() => {
-                if (!sensorEventReceived) {
-                    const diagEl = document.getElementById('sensor-diag-msg');
-                    const badge = document.getElementById('sensor-status-badge');
-                    badge.textContent = 'TERBLOKIR';
-                    badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-400';
-                    diagEl.innerHTML = '⚠️ Sensor Android diblokir browser. Di Chrome Android: klik <b>ikon gembok/setelan di sebelah URL</b> &rarr; <b>Izin (Permissions)</b> &rarr; aktifkan <b>Motion sensors</b>, lalu muat ulang.';
-                    diagEl.classList.remove('hidden');
-                    showToast('Izinkan Motion Sensors di setelan URL Chrome Android!', 'warning');
+            const liveAz = document.getElementById('live-auto-az');
+            const liveEl = document.getElementById('live-auto-el');
+            if (liveAz) liveAz.textContent = azStr;
+            if (liveEl) liveEl.textContent = elStr;
+
+            const diag = document.getElementById('sensor-source-diag');
+            if (diag && sourceName) {
+                diag.textContent = `Sumber: ${sourceName} (${azStr})`;
+            }
+
+            // Bubble movement
+            const bubble = document.getElementById('waterpass-bubble');
+            const levelText = document.getElementById('level-indicator-text');
+            if (bubble) {
+                const maxOffset = 34;
+                const dx = Math.max(-maxOffset, Math.min(maxOffset, smoothedSensor.roll * 1.6));
+                const dy = Math.max(-maxOffset, Math.min(maxOffset, smoothedSensor.pitch * 1.6));
+                bubble.style.transform = `translate(${dx}px, ${dy}px)`;
+
+                const tilt = Math.hypot(smoothedSensor.pitch, smoothedSensor.roll);
+                if (levelText) {
+                    if (tilt <= 2.5) {
+                        levelText.textContent = 'POSISI DATAR (LEVEL OK)';
+                        levelText.className = 'text-[11px] font-extrabold text-emerald-400 truncate';
+                    } else {
+                        levelText.textContent = `MIRING ${tilt.toFixed(1)}° — SESUAIKAN ALAT`;
+                        levelText.className = 'text-[11px] font-extrabold text-amber-400 truncate';
+                    }
                 }
-            }, 2000);
-        }
-
-        function activateRealSensors() {
-            const badge = document.getElementById('sensor-status-badge');
-            badge.textContent = 'MENGHUBUNGKAN...';
-            badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400';
-
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            bindSensorListeners();
-                            showToast('Sensor diaktifkan. Gerakkan HP untuk menguji...', 'success');
-                        } else {
-                            badge.textContent = 'DITOLAK';
-                            badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-400';
-                            showToast('Izin sensor ditolak oleh perangkat.', 'error');
-                        }
-                    })
-                    .catch(() => bindSensorListeners());
-            } else {
-                bindSensorListeners();
-                showToast('Mengaktifkan sensor Android...', 'info');
             }
         }
 
         // =========================================================================
-        // 5. STOPWATCH, AUTO-CAPTURE TRIGGER & WEB AUDIO BEEP ALERTS
+        // 7. STOPWATCH & AUTO-RECORD ENGINE
+        // =========================================================================
+        function playBeep(freq = 880, duration = 0.15) {
+            if (!audioEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function toggleAudioMute() {
+            audioEnabled = !audioEnabled;
+            const btn = document.getElementById('btn-audio-toggle');
+            if (audioEnabled) {
+                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i><span>Beep</span>';
+                btn.className = 'text-[11px] bg-navy-950 border border-slate-700 px-2 py-0.5 rounded-lg text-emerald-400 font-bold flex items-center gap-1';
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i><span>Mute</span>';
+                btn.className = 'text-[11px] bg-navy-950 border border-slate-700 px-2 py-0.5 rounded-lg text-slate-400 font-bold flex items-center gap-1';
+            }
+        }
+
+        function startTimer() {
+            if (isTimerRunning) return;
+            isTimerRunning = true;
+            isSessionCompleted = false;
+            requestScreenWakeLock(false);
+
+            document.getElementById('btn-timer-start').classList.add('hidden');
+            document.getElementById('btn-timer-pause').classList.remove('hidden');
+            document.getElementById('btn-timer-stop').classList.remove('hidden');
+
+            const statusEl = document.getElementById('timer-status-text');
+            statusEl.textContent = 'Balon Mengudara — Pengamatan Aktif';
+            statusEl.className = 'text-[11px] font-bold text-emerald-400 mt-0.5';
+
+            playBeep(1046, 0.2);
+
+            timerInterval = setInterval(() => {
+                elapsedSeconds++;
+                updateTimerDisplay();
+
+                const secInMin = elapsedSeconds % 60;
+                const timerBox = document.getElementById('timer-box');
+
+                if (secInMin >= 55 && secInMin <= 59) {
+                    const left = 60 - secInMin;
+                    statusEl.textContent = `PERSIAPAN BACA SUDUT (${left} DETIK LAGI)...`;
+                    statusEl.className = 'text-[11px] font-extrabold text-amber-400 mt-0.5';
+                    timerBox.classList.add('border-amber-500');
+                    playBeep(660, 0.08);
+                } else if (secInMin === 0 && elapsedSeconds > 0) {
+                    const reachedMinute = Math.floor(elapsedSeconds / 60);
+                    playBeep(1200, 0.35);
+                    timerBox.classList.remove('border-amber-500');
+                    timerBox.classList.add('border-emerald-500');
+
+                    if (recordMode === 'auto') {
+                        triggerAutoRecordNow(false, reachedMinute);
+                    }
+
+                    statusEl.textContent = `MENIT KE-${reachedMinute} TERCATAT!`;
+                    statusEl.className = 'text-[11px] font-extrabold text-emerald-400 mt-0.5';
+
+                    setTimeout(() => {
+                        if (isTimerRunning) {
+                            timerBox.classList.remove('border-emerald-500');
+                            statusEl.textContent = 'Balon Mengudara — Pengamatan Aktif';
+                            statusEl.className = 'text-[11px] font-bold text-emerald-400 mt-0.5';
+                        }
+                    }, 2200);
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            isTimerRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('btn-timer-pause').classList.add('hidden');
+            const startBtn = document.getElementById('btn-timer-start');
+            startBtn.classList.remove('hidden');
+            startBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>LANJUT</span>';
+            document.getElementById('timer-status-text').textContent = 'Timer Dijeda (Paused)';
+            document.getElementById('timer-status-text').className = 'text-[11px] font-bold text-amber-400 mt-0.5';
+        }
+
+        function stopAndFinishObservation() {
+            openModal('Selesai Merekam', 'Akhiri pengamatan balon saat ini, simpan ke riwayat, dan lihat hasil Sandi PILOT? (Sesi berikutnya akan otomatis dimulai dari awal).', () => {
+                isTimerRunning = false;
+                clearInterval(timerInterval);
+                elapsedSeconds = 0;
+                updateTimerDisplay();
+
+                document.getElementById('btn-timer-pause').classList.add('hidden');
+                document.getElementById('btn-timer-stop').classList.add('hidden');
+                document.getElementById('btn-timer-start').classList.remove('hidden');
+                document.getElementById('btn-timer-start').innerHTML = '<i class="fa-solid fa-play"></i><span>LEPAS BALON</span>';
+                document.getElementById('timer-status-text').textContent = 'Pengamatan Selesai — Siap Sesi Baru';
+                document.getElementById('timer-status-text').className = 'text-[11px] font-bold text-sky-400 mt-0.5';
+                document.getElementById('timer-box').classList.remove('border-amber-500', 'border-emerald-500');
+
+                if (readings.length > 0) {
+                    saveSessionToHistory();
+                }
+
+                isSessionCompleted = true;
+                saveToLocalStorage();
+                switchTab('report');
+                showToast('Pengamatan selesai & tersimpan ke riwayat!', 'success');
+            });
+        }
+
+        function resetTimerConfirm() {
+            openModal('Reset Timer', 'Kembalikan timer ke 00:00? Data tabel yang sudah direkam tidak akan terhapus.', () => {
+                isTimerRunning = false;
+                clearInterval(timerInterval);
+                elapsedSeconds = 0;
+                updateTimerDisplay();
+                document.getElementById('btn-timer-pause').classList.add('hidden');
+                document.getElementById('btn-timer-stop').classList.add('hidden');
+                const startBtn = document.getElementById('btn-timer-start');
+                startBtn.classList.remove('hidden');
+                startBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>LEPAS BALON</span>';
+                document.getElementById('timer-status-text').textContent = 'Siap Lepas Balon';
+                document.getElementById('timer-status-text').className = 'text-[11px] font-semibold text-slate-400 mt-0.5';
+                document.getElementById('timer-box').classList.remove('border-amber-500', 'border-emerald-500');
+            });
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(elapsedSeconds / 60);
+            const secs = elapsedSeconds % 60;
+            const disp = document.getElementById('stopwatch-display');
+            if (disp) disp.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+            const bar = document.getElementById('minute-progress-bar');
+            if (bar) bar.style.width = `${(secs / 60) * 100}%`;
+
+            const targetMin = mins + 1;
+            const tLabel = document.getElementById('target-minute-label');
+            const aBadge = document.getElementById('auto-next-min-badge');
+            const bNow = document.getElementById('btn-auto-now-min');
+            if (tLabel) tLabel.textContent = targetMin;
+            if (aBadge) aBadge.textContent = targetMin;
+            if (bNow) bNow.textContent = targetMin;
+        }
+
+        // =========================================================================
+        // 8. RECORDING MODES (AUTO SENSOR & MANUAL NUMPAD)
         // =========================================================================
         function setRecordMode(mode) {
             recordMode = mode;
@@ -1051,244 +1352,67 @@
             const panelManual = document.getElementById('panel-mode-manual');
 
             if (mode === 'auto') {
-                btnAuto.className = 'py-2.5 px-2 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all bg-emerald-500 text-navy-950 shadow';
-                btnManual.className = 'py-2.5 px-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:bg-navy-800';
+                btnAuto.className = 'py-2.5 px-2 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all bg-emerald-500 text-navy-950 shadow-md';
+                btnManual.className = 'py-2.5 px-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:bg-navy-800 hover:text-white';
                 panelAuto.classList.remove('hidden');
                 panelManual.classList.add('hidden');
             } else {
-                btnManual.className = 'py-2.5 px-2 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all bg-sky-500 text-navy-950 shadow';
-                btnAuto.className = 'py-2.5 px-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:bg-navy-800';
+                btnManual.className = 'py-2.5 px-2 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all bg-sky-500 text-navy-950 shadow-md';
+                btnAuto.className = 'py-2.5 px-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-slate-400 hover:bg-navy-800 hover:text-white';
                 panelManual.classList.remove('hidden');
                 panelAuto.classList.add('hidden');
             }
         }
 
-        function triggerAutoRecordNow(isManualOverride = false, specificMinute = null) {
-            const targetMin = specificMinute !== null ? specificMinute : editingMinute;
-            const capturedAz = Math.round(smoothedSensor.az * 10) / 10;
-            const capturedEl = Math.max(0.5, Math.round(smoothedSensor.el * 10) / 10);
+        function triggerAutoRecordNow(isManualTrigger = false, explicitMinute = null) {
+            const nextMin = explicitMinute || (readings.length > 0 ? Math.max(...readings.map(r => r.minute)) + 1 : 1);
+            const azVal = parseFloat(smoothedSensor.az.toFixed(1));
+            const elVal = parseFloat(Math.max(0.5, smoothedSensor.el).toFixed(1));
 
-            const idx = readings.findIndex(r => r.minute === targetMin);
-            if (idx >= 0) {
-                readings[idx] = { minute: targetMin, azimuth: capturedAz, elevation: capturedEl };
-            } else {
-                readings.push({ minute: targetMin, azimuth: capturedAz, elevation: capturedEl });
-            }
-            readings.sort((a, b) => a.minute - b.minute);
-
-            // Visual Flash Feedback on Auto Banner
-            const banner = document.getElementById('auto-capture-banner');
-            const bTitle = document.getElementById('auto-banner-title');
-            const bSub = document.getElementById('auto-banner-sub');
-
-            banner.className = 'bg-emerald-500 border border-white rounded-xl p-2.5 flex items-center justify-between transition-all shadow-lg';
-            bTitle.className = 'text-[11px] font-extrabold text-navy-950';
-            bTitle.textContent = `TEREKAM OTOMATIS: MENIT KE-${targetMin}`;
-            bSub.className = 'text-[10px] font-bold text-navy-900 leading-tight mt-0.5';
-            bSub.textContent = `Azimuth ${capturedAz.toFixed(1)}° | Elevasi ${capturedEl.toFixed(1)}°`;
-
-            setTimeout(() => {
-                banner.className = 'bg-emerald-950/60 border border-emerald-500/40 rounded-xl p-2.5 flex items-center justify-between transition-all';
-                bTitle.className = 'text-[11px] font-extrabold text-emerald-300';
-                bSub.className = 'text-[10px] text-slate-300 leading-tight mt-0.5';
-            }, 2500);
-
-            editingMinute = targetMin + 1;
+            upsertReading(nextMin, azVal, elVal);
+            editingMinute = nextMin + 1;
             updateNumpadUI();
-            recalculateAll();
-            saveToLocalStorage();
 
-            if (isManualOverride) {
-                playBeep(1318.5, 0.15);
-                showToast(`Rekam cepat Menit ke-${targetMin} berhasil!`, 'success');
+            if (isManualTrigger) {
+                playBeep(1100, 0.15);
+                showToast(`Menit ke-${nextMin} direkam (Az: ${azVal}°, El: ${elVal}°).`, 'success');
             }
         }
 
-        function playBeep(freq = 880, duration = 0.15, type = 'sine') {
-            if (!audioEnabled) return;
-            try {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch (e) {
-                console.warn('AudioContext error:', e);
-            }
-        }
-
-        function toggleAudioMute() {
-            audioEnabled = !audioEnabled;
-            const btn = document.getElementById('btn-audio-toggle');
-            if (audioEnabled) {
-                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i><span>Beep</span>';
-                btn.className = 'text-[11px] bg-navy-950 border border-slate-700 px-2 py-0.5 rounded-lg text-emerald-400 font-semibold flex items-center gap-1';
-                playBeep(880, 0.1);
-            } else {
-                btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i><span>Mute</span>';
-                btn.className = 'text-[11px] bg-navy-950 border border-slate-700 px-2 py-0.5 rounded-lg text-slate-400 font-semibold flex items-center gap-1';
-            }
-        }
-
-        function startTimer() {
-            if (isTimerRunning) return;
-            isTimerRunning = true;
-            playBeep(1046.5, 0.25); // C6 start beep
-
-            document.getElementById('btn-timer-start').classList.add('hidden');
-            document.getElementById('btn-timer-pause').classList.remove('hidden');
-            document.getElementById('timer-status-text').textContent = 'Balon Mengudara...';
-            document.getElementById('timer-status-text').className = 'text-[11px] text-emerald-400 font-bold';
-
-            timerInterval = setInterval(() => {
-                elapsedSeconds++;
-                updateTimerUI();
-            }, 1000);
-        }
-
-        function pauseTimer() {
-            isTimerRunning = false;
-            clearInterval(timerInterval);
-            document.getElementById('btn-timer-pause').classList.add('hidden');
-            document.getElementById('btn-timer-start').classList.remove('hidden');
-            document.getElementById('btn-timer-start').innerHTML = '<i class="fa-solid fa-play"></i><span>LANJUT</span>';
-            document.getElementById('timer-status-text').textContent = 'Dijeda';
-            document.getElementById('timer-status-text').className = 'text-[11px] text-amber-400 font-bold';
-        }
-
-        function resetTimerConfirm() {
-            openModal('Reset Timer?', 'Waktu stopwatch akan kembali ke 00:00. Data yang sudah disimpan di tabel tetap aman.', () => {
-                isTimerRunning = false;
-                clearInterval(timerInterval);
-                elapsedSeconds = 0;
-                updateTimerUI();
-                document.getElementById('btn-timer-pause').classList.add('hidden');
-                document.getElementById('btn-timer-start').classList.remove('hidden');
-                document.getElementById('btn-timer-start').innerHTML = '<i class="fa-solid fa-play"></i><span>LEPAS BALON</span>';
-                document.getElementById('timer-status-text').textContent = 'Siap Lepas Balon';
-                document.getElementById('timer-status-text').className = 'text-[11px] text-slate-400';
-            });
-        }
-
-        function updateTimerUI() {
-            const mins = Math.floor(elapsedSeconds / 60);
-            const secs = elapsedSeconds % 60;
-            const formatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-            document.getElementById('stopwatch-display').textContent = formatted;
-
-            const pct = (secs / 60) * 100;
-            const progBar = document.getElementById('minute-progress-bar');
-            const timerBox = document.getElementById('timer-box');
-            progBar.style.width = `${pct}%`;
-
-            const targetMin = mins + 1;
-            document.getElementById('target-minute-label').textContent = targetMin;
-
-            // Alert logic at second 55..59 and second 00
-            if (secs >= 55) {
-                progBar.className = 'bg-amber-500 h-full transition-all duration-200';
-                timerBox.classList.add('border-amber-500');
-                timerBox.classList.remove('border-slate-800', 'border-emerald-500');
-                document.getElementById('timer-status-text').textContent = `SIAP MNT ${targetMin}!`;
-                document.getElementById('timer-status-text').className = 'text-[11px] text-amber-400 font-extrabold animate-pulse';
-                playBeep(660, 0.12);
-            } else if (secs === 0 && elapsedSeconds > 0) {
-                progBar.className = 'bg-emerald-500 h-full transition-all duration-200';
-                timerBox.classList.add('border-emerald-500');
-                timerBox.classList.remove('border-slate-800', 'border-amber-500');
-                playBeep(1174.66, 0.35);
-
-                if (recordMode === 'auto') {
-                    document.getElementById('timer-status-text').textContent = `TEREKAM MNT ${mins}!`;
-                    document.getElementById('timer-status-text').className = 'text-[11px] text-emerald-400 font-extrabold';
-                    triggerAutoRecordNow(false, mins);
-                } else {
-                    document.getElementById('timer-status-text').textContent = `BACA MNT ${mins}!`;
-                    document.getElementById('timer-status-text').className = 'text-[11px] text-emerald-400 font-extrabold';
-                }
-            } else {
-                progBar.className = 'bg-sky-500 h-full transition-all duration-200';
-                timerBox.classList.remove('border-amber-500', 'border-emerald-500');
-                timerBox.classList.add('border-slate-800');
-                if (isTimerRunning) {
-                    document.getElementById('timer-status-text').textContent = 'Balon Mengudara...';
-                    document.getElementById('timer-status-text').className = 'text-[11px] text-emerald-400 font-bold';
-                }
-            }
-        }
-
-        // =========================================================================
-        // 6. TOUCHSCREEN NUMPAD & DATA ENTRY LOGIC
-        // =========================================================================
         function setActiveField(field) {
             activeInputField = field;
-            updateNumpadUI();
-        }
-
-        function switchActiveField() {
-            activeInputField = (activeInputField === 'azimuth') ? 'elevation' : 'azimuth';
-            updateNumpadUI();
-        }
-
-        function updateNumpadUI() {
             const boxAz = document.getElementById('field-box-azimuth');
             const boxEl = document.getElementById('field-box-elevation');
             const curAz = document.getElementById('cursor-azimuth');
             const curEl = document.getElementById('cursor-elevation');
-            const lblEl = document.getElementById('label-elevation');
 
-            if (activeInputField === 'azimuth') {
-                boxAz.className = 'cursor-pointer bg-navy-950 border-2 border-sky-500 rounded-xl p-3 transition shadow-inner';
-                boxEl.className = 'cursor-pointer bg-navy-950 border-2 border-slate-800 rounded-xl p-3 transition';
+            if (field === 'azimuth') {
+                boxAz.className = 'cursor-pointer bg-navy-950 border-2 border-sky-500 rounded-xl p-2.5 transition';
+                boxEl.className = 'cursor-pointer bg-navy-950 border-2 border-slate-800 rounded-xl p-2.5 transition';
                 curAz.classList.remove('hidden');
                 curEl.classList.add('hidden');
-                lblEl.className = 'text-[11px] font-bold uppercase text-slate-400';
             } else {
-                boxEl.className = 'cursor-pointer bg-navy-950 border-2 border-sky-500 rounded-xl p-3 transition shadow-inner';
-                boxAz.className = 'cursor-pointer bg-navy-950 border-2 border-slate-800 rounded-xl p-3 transition';
+                boxEl.className = 'cursor-pointer bg-navy-950 border-2 border-sky-500 rounded-xl p-2.5 transition';
+                boxAz.className = 'cursor-pointer bg-navy-950 border-2 border-slate-800 rounded-xl p-2.5 transition';
                 curEl.classList.remove('hidden');
                 curAz.classList.add('hidden');
-                lblEl.className = 'text-[11px] font-bold uppercase text-sky-400';
             }
+        }
 
-            document.getElementById('val-azimuth').textContent = currentInputs.azimuth;
-            document.getElementById('val-elevation').textContent = currentInputs.elevation;
-            document.getElementById('input-minute-badge').textContent = editingMinute;
-            document.getElementById('btn-save-min-num').textContent = editingMinute;
-            
-            const autoBadge = document.getElementById('auto-next-min-badge');
-            const autoBtnMin = document.getElementById('btn-auto-now-min');
-            if (autoBadge) autoBadge.textContent = editingMinute;
-            if (autoBtnMin) autoBtnMin.textContent = editingMinute;
-
-            const ascentRate = parseFloat(document.getElementById('ascent-rate').value) || 150;
-            const previewH = editingMinute * ascentRate;
-            document.getElementById('input-height-preview').textContent = `${previewH} m (${Math.round(previewH * 3.28084)} ft)`;
+        function switchActiveField() {
+            setActiveField(activeInputField === 'azimuth' ? 'elevation' : 'azimuth');
         }
 
         function numpadPress(char) {
             let val = currentInputs[activeInputField];
             if (char === '.' && val.includes('.')) return;
             if (val.length >= 6) return;
-            if (val === '0' && char !== '.') val = '';
             currentInputs[activeInputField] = val + char;
             updateNumpadUI();
         }
 
         function numpadBackspace() {
-            let val = currentInputs[activeInputField];
-            currentInputs[activeInputField] = val.slice(0, -1);
+            currentInputs[activeInputField] = currentInputs[activeInputField].slice(0, -1);
             updateNumpadUI();
         }
 
@@ -1298,9 +1422,7 @@
         }
 
         function changeEditingMinute(delta) {
-            const next = editingMinute + delta;
-            if (next < 1) return;
-            editingMinute = next;
+            editingMinute = Math.max(1, editingMinute + delta);
             const existing = readings.find(r => r.minute === editingMinute);
             if (existing) {
                 currentInputs.azimuth = String(existing.azimuth);
@@ -1309,8 +1431,22 @@
                 currentInputs.azimuth = '';
                 currentInputs.elevation = '';
             }
-            activeInputField = 'azimuth';
             updateNumpadUI();
+        }
+
+        function updateNumpadUI() {
+            const badge = document.getElementById('input-minute-badge');
+            const saveNum = document.getElementById('btn-save-min-num');
+            const hPrev = document.getElementById('input-height-preview');
+            const valAz = document.getElementById('val-azimuth');
+            const valEl = document.getElementById('val-elevation');
+
+            const rate = STANDARD_ASCENT_RATE;
+            if (badge) badge.textContent = editingMinute;
+            if (saveNum) saveNum.textContent = editingMinute;
+            if (hPrev) hPrev.textContent = `${Math.round(editingMinute * rate)} m`;
+            if (valAz) valAz.textContent = currentInputs.azimuth;
+            if (valEl) valEl.textContent = currentInputs.elevation;
         }
 
         function saveMinuteReading() {
@@ -1318,658 +1454,550 @@
             const el = parseFloat(currentInputs.elevation);
 
             if (isNaN(az) || az < 0 || az > 360) {
-                showToast('Sudut Azimuth harus antara 0° hingga 360°!', 'error');
+                showToast('Masukkan sudut Azimuth valid (0 - 360°).', 'error');
                 setActiveField('azimuth');
                 return;
             }
             if (isNaN(el) || el <= 0 || el > 90) {
-                showToast('Sudut Elevasi harus antara 0.1° hingga 90°!', 'error');
+                showToast('Masukkan sudut Elevasi valid (0.1 - 90°).', 'error');
                 setActiveField('elevation');
                 return;
             }
 
-            // Insert or update reading
-            const idx = readings.findIndex(r => r.minute === editingMinute);
-            if (idx >= 0) {
-                readings[idx] = { minute: editingMinute, azimuth: az, elevation: el };
-            } else {
-                readings.push({ minute: editingMinute, azimuth: az, elevation: el });
-            }
+            upsertReading(editingMinute, az, el);
+            showToast(`Data Menit ke-${editingMinute} disimpan.`, 'success');
 
-            // Sort by minute ascending
-            readings.sort((a, b) => a.minute - b.minute);
-
-            playBeep(1318.5, 0.12); // E6 confirmation beep
-            showToast(`Data Menit ke-${editingMinute} (Az: ${az}°, El: ${el}°) tersimpan!`, 'success');
-
-            // Advance to next minute automatically
             editingMinute++;
-            const nextExisting = readings.find(r => r.minute === editingMinute);
-            currentInputs.azimuth = nextExisting ? String(nextExisting.azimuth) : '';
-            currentInputs.elevation = nextExisting ? String(nextExisting.elevation) : '';
-            activeInputField = 'azimuth';
-
+            currentInputs = { azimuth: '', elevation: '' };
+            setActiveField('azimuth');
             updateNumpadUI();
-            recalculateAll();
+        }
+
+        function upsertReading(minute, azimuth, elevation) {
+            isSessionCompleted = false;
+            const idx = readings.findIndex(r => r.minute === minute);
+            if (idx >= 0) {
+                readings[idx] = { minute, azimuth, elevation };
+            } else {
+                readings.push({ minute, azimuth, elevation });
+            }
+            readings.sort((a, b) => a.minute - b.minute);
             saveToLocalStorage();
+            recalculateAll();
         }
 
-        function editReadingRow(minute) {
-            const item = readings.find(r => r.minute === minute);
-            if (!item) return;
-            editingMinute = item.minute;
-            currentInputs.azimuth = String(item.azimuth);
-            currentInputs.elevation = String(item.elevation);
-            activeInputField = 'azimuth';
-            updateNumpadUI();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            showToast(`Mengedit data Menit ke-${minute}`, 'info');
-        }
-
-        function deleteReadingRow(minute) {
+        function deleteReading(minute) {
             readings = readings.filter(r => r.minute !== minute);
-            recalculateAll();
             saveToLocalStorage();
-            showToast(`Data Menit ke-${minute} dihapus.`, 'info');
+            recalculateAll();
+            showToast(`Menit ke-${minute} dihapus.`, 'info');
         }
 
         function clearAllReadings() {
-            if (readings.length === 0) return;
-            openModal('Hapus Semua Data?', 'Seluruh catatan sudut pengamatan PIBAL saat ini akan dihapus.', () => {
+            openModal('Hapus Semua Data', 'Hapus seluruh baris data pengamatan pada tabel ini?', () => {
                 readings = [];
                 editingMinute = 1;
                 currentInputs = { azimuth: '', elevation: '' };
+                saveToLocalStorage();
                 updateNumpadUI();
                 recalculateAll();
-                saveToLocalStorage();
-                showToast('Semua data pengamatan telah dikosongkan.', 'info');
+                showToast('Semua data pengamatan dihapus.', 'info');
             });
         }
 
-        // =========================================================================
-        // 7. METEOROLOGICAL PIBAL TRIGONOMETRIC CALCULATIONS
-        // =========================================================================
-        function degToRad(deg) {
-            return deg * (Math.PI / 180);
+        function loadSampleData() {
+            readings = [
+                { minute: 1, azimuth: 310.8, elevation: 6.5 },
+                { minute: 2, azimuth: 308.4, elevation: 7.2 },
+                { minute: 3, azimuth: 305.1, elevation: 8.1 },
+                { minute: 4, azimuth: 301.9, elevation: 9.0 },
+                { minute: 5, azimuth: 298.5, elevation: 10.2 },
+                { minute: 6, azimuth: 294.0, elevation: 11.5 },
+                { minute: 7, azimuth: 289.2, elevation: 12.8 },
+                { minute: 8, azimuth: 284.6, elevation: 14.1 },
+                { minute: 9, azimuth: 279.8, elevation: 15.6 },
+                { minute: 10, azimuth: 275.0, elevation: 17.0 }
+            ];
+            editingMinute = 11;
+            isSessionCompleted = false;
+            saveToLocalStorage();
+            updateNumpadUI();
+            recalculateAll();
+            showToast('10 menit data contoh PIBAL dimuat.', 'success');
         }
 
-        function radToDeg(rad) {
-            return rad * (180 / Math.PI);
-        }
-
+        // =========================================================================
+        // 9. PIBAL TRIGONOMETRY & WIND CALCULATION ENGINE
+        // =========================================================================
         function recalculateAll() {
-            const ascentRate = parseFloat(document.getElementById('ascent-rate').value) || 150;
-            const surfDir = parseFloat(document.getElementById('surface-dir').value) || 0;
-            const surfSpd = parseFloat(document.getElementById('surface-spd').value) || 0;
+            const rate = STANDARD_ASCENT_RATE;
+            const surfDir = parseFloat(document.getElementById('surface-dir')?.value) || 0;
+            const surfSpd = parseFloat(document.getElementById('surface-spd')?.value) || 0;
 
             computedRows = [];
-
-            // Minute 0 (Surface)
-            computedRows.push({
-                minute: 0,
-                heightM: 0,
-                heightFt: 0,
-                azimuth: null,
-                elevation: null,
-                distanceD: 0,
-                x: 0,
-                y: 0,
-                windDir: Math.round(surfDir),
-                windSpdKt: Math.round(surfSpd * 10) / 10
-            });
-
             let prevX = 0;
             let prevY = 0;
-            let prevMin = 0;
+            let prevTimeSec = 0;
 
             readings.forEach(r => {
-                const dtSeconds = (r.minute - prevMin) * 60;
-                const H = r.minute * ascentRate; // Height in meters
-                const H_ft = Math.round(H * 3.28084); // Height in feet
+                const h = r.minute * rate;
+                const elRad = (r.elevation * Math.PI) / 180;
+                const azRad = (r.azimuth * Math.PI) / 180;
 
-                // Horizontal distance D = H / tan(Elevation)
-                const elRad = degToRad(r.elevation);
-                const D = (r.elevation >= 89.9) ? 0 : H / Math.tan(elRad);
+                const horizDist = h / Math.tan(elRad);
+                const x = horizDist * Math.sin(azRad);
+                const y = horizDist * Math.cos(azRad);
 
-                // Balloon position coordinates (X = Easting, Y = Northing)
-                const azRad = degToRad(r.azimuth);
-                const X = D * Math.sin(azRad);
-                const Y = D * Math.cos(azRad);
+                const dt = (r.minute * 60) - prevTimeSec;
+                const dx = x - prevX;
+                const dy = y - prevY;
 
-                // Displacement vector during interval
-                const dX = X - prevX;
-                const dY = Y - prevY;
-
-                // Speed in m/s and conversion to Knots (1 m/s = 1.94384 knots)
-                const distStep = Math.sqrt(dX * dX + dY * dY);
-                const speedMs = dtSeconds > 0 ? (distStep / dtSeconds) : 0;
+                const u = dx / dt;
+                const v = dy / dt;
+                const speedMs = Math.hypot(u, v);
                 const speedKt = speedMs * 1.94384;
 
-                // Meteorological Wind Direction (direction FROM which the wind blows)
-                // Vector (dX, dY) points towards where balloon moves; wind comes from opposite (+180 deg)
-                let windFromDeg = (radToDeg(Math.atan2(dX, dY)) + 180) % 360;
-                if (windFromDeg < 0) windFromDeg += 360;
-                if (speedKt < 0.5) windFromDeg = 0; // Calm wind
+                // Meteorological wind direction (direction wind blows FROM)
+                let dirDeg = (Math.atan2(-u, -v) * 180) / Math.PI;
+                if (dirDeg < 0) dirDeg += 360;
 
                 computedRows.push({
                     minute: r.minute,
-                    heightM: Math.round(H),
-                    heightFt: H_ft,
-                    azimuth: r.azimuth,
                     elevation: r.elevation,
-                    distanceD: Math.round(D),
-                    x: Math.round(X),
-                    y: Math.round(Y),
-                    windDir: Math.round(windFromDeg),
-                    windSpdKt: Math.round(speedKt * 10) / 10
+                    azimuth: r.azimuth,
+                    height: Math.round(h),
+                    horizDist: Math.round(horizDist),
+                    dir: Math.round(dirDeg) % 360,
+                    speedKt: Math.round(speedKt)
                 });
 
-                prevX = X;
-                prevY = Y;
-                prevMin = r.minute;
+                prevX = x;
+                prevY = y;
+                prevTimeSec = r.minute * 60;
             });
 
             renderPlottingTable();
-            generatePilotCodeAndReport();
+            generatePilotCodeAndLevels(surfDir, surfSpd);
         }
 
         function renderPlottingTable() {
             const tbody = document.getElementById('plotting-table-body');
-            const summaryBody = document.getElementById('report-minute-summary-body');
-            document.getElementById('total-minutes-count').textContent = readings.length;
+            const countEl = document.getElementById('total-minutes-count');
+            if (countEl) countEl.textContent = computedRows.length;
+            if (!tbody) return;
 
-            if (computedRows.length <= 1) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="py-6 text-center text-slate-500 font-sans text-xs">
-                            Belum ada data sudut. Tekan <strong>LEPAS BALON</strong> atau klik <strong>Contoh</strong>.
-                        </td>
-                    </tr>
-                `;
-                summaryBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500 font-sans">Belum ada data</td></tr>`;
+            if (computedRows.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-5 text-center text-slate-500 font-sans text-xs">Belum ada data terekam. Tekan LEPAS BALON untuk mulai.</td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = computedRows.map(row => {
-                if (row.minute === 0) {
-                    return `
-                        <tr class="bg-navy-950/60 text-slate-300">
-                            <td class="py-2 px-2 font-bold text-sky-400">SFC</td>
-                            <td class="py-2 px-2">0m</td>
-                            <td class="py-2 px-2 text-slate-500">-</td>
-                            <td class="py-2 px-2 font-bold text-sky-400">${String(row.windDir).padStart(3, '0')}°</td>
-                            <td class="py-2 px-2 font-bold text-amber-400">${row.windSpdKt.toFixed(1)}kt</td>
-                            <td class="py-2 px-1.5 text-center text-[9px] text-slate-500">0</td>
-                        </tr>
-                    `;
-                }
-                return `
-                    <tr class="hover:bg-navy-800/60 transition">
-                        <td class="py-2 px-2 font-bold text-white">${row.minute}</td>
-                        <td class="py-2 px-2 text-slate-300">${row.heightM}m</td>
-                        <td class="py-2 px-2 text-sky-300">${row.azimuth.toFixed(1)}°<span class="text-slate-500">/</span><span class="text-emerald-300">${row.elevation.toFixed(1)}°</span></td>
-                        <td class="py-2 px-2 font-bold text-sky-400">${String(row.windDir).padStart(3, '0')}°</td>
-                        <td class="py-2 px-2 font-bold text-amber-400">${row.windSpdKt.toFixed(1)}kt</td>
-                        <td class="py-2 px-1.5 text-center">
-                            <div class="flex items-center justify-center gap-1">
-                                <button onclick="editReadingRow(${row.minute})" title="Edit" class="p-1.5 rounded bg-navy-800 text-sky-400"><i class="fa-solid fa-pen text-[9px]"></i></button>
-                                <button onclick="deleteReadingRow(${row.minute})" title="Hapus" class="p-1.5 rounded bg-navy-800 text-rose-400"><i class="fa-solid fa-trash text-[9px]"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            // Render compact summary table in Tab 3
-            summaryBody.innerHTML = computedRows.map(row => `
-                <tr>
-                    <td class="py-1.5 px-2 font-bold">${row.minute === 0 ? 'SFC' : row.minute}</td>
-                    <td class="py-1.5 px-2">${row.heightM}m</td>
-                    <td class="py-1.5 px-2">${row.minute === 0 ? '-' : `${row.azimuth}°/${row.elevation}°`}</td>
-                    <td class="py-1.5 px-2 font-bold text-sky-400">${String(row.windDir).padStart(3, '0')}°</td>
-                    <td class="py-1.5 px-2 font-bold text-amber-400">${row.windSpdKt.toFixed(1)}kt</td>
+            tbody.innerHTML = computedRows.map(row => `
+                <tr class="hover:bg-navy-950/60">
+                    <td class="py-2 px-2 font-bold text-white">${row.minute}</td>
+                    <td class="py-2 px-2 text-emerald-400 font-bold">${row.elevation.toFixed(1)}°</td>
+                    <td class="py-2 px-2 text-sky-400 font-bold">${row.azimuth.toFixed(1)}°</td>
+                    <td class="py-2 px-2 text-slate-300">${row.height}m</td>
+                    <td class="py-2 px-2 font-extrabold text-sky-400">${String(row.dir).padStart(3, '0')}°</td>
+                    <td class="py-2 px-2 font-extrabold text-amber-400">${row.speedKt}</td>
+                    <td class="py-2 px-1.5 text-center">
+                        <button onclick="deleteReading(${row.minute})" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
                 </tr>
             `).join('');
         }
 
-        // =========================================================================
-        // 8. SANDI PILOT (FM 32) GENERATOR & STANDARD LEVEL INTERPOLATION
-        // =========================================================================
-        function interpolateAtHeightFt(targetFt) {
-            if (computedRows.length === 0) return null;
-            if (targetFt === 0) {
-                return { dir: computedRows[0].windDir, spd: computedRows[0].windSpdKt };
+        function formatDDFFF(dirDeg, speedKt) {
+            let d = Math.round(dirDeg / 5) * 5;
+            if (d === 360) d = 0;
+            let dd = Math.floor(d / 10);
+            let fff = Math.round(speedKt);
+            if (d % 10 === 5) {
+                dd += 50;
             }
-            const maxRow = computedRows[computedRows.length - 1];
-            if (targetFt > maxRow.heightFt) return null;
+            if (fff >= 100) {
+                dd += 50;
+                fff -= 100;
+            }
+            return `${String(dd).padStart(2, '0')}${String(fff).padStart(3, '0')}`;
+        }
 
-            for (let i = 0; i < computedRows.length - 1; i++) {
-                const r1 = computedRows[i];
-                const r2 = computedRows[i + 1];
-                if (targetFt >= r1.heightFt && targetFt <= r2.heightFt) {
-                    const ratio = (r2.heightFt === r1.heightFt) ? 0 : (targetFt - r1.heightFt) / (r2.heightFt - r1.heightFt);
-                    
-                    // Vector interpolation for accurate wind direction & speed
-                    const u1 = -r1.windSpdKt * Math.sin(degToRad(r1.windDir));
-                    const v1 = -r1.windSpdKt * Math.cos(degToRad(r1.windDir));
-                    const u2 = -r2.windSpdKt * Math.sin(degToRad(r2.windDir));
-                    const v2 = -r2.windSpdKt * Math.cos(degToRad(r2.windDir));
+        function interpolateWindAtHeight(targetH, surfDir, surfSpd) {
+            if (targetH === 0) return { dir: Math.round(surfDir), speedKt: Math.round(surfSpd) };
+            if (computedRows.length === 0) return null;
 
-                    const u = u1 + ratio * (u2 - u1);
-                    const v = v1 + ratio * (v2 - v1);
+            const exact = computedRows.find(r => r.height === targetH);
+            if (exact) return { dir: exact.dir, speedKt: exact.speedKt };
 
-                    const spd = Math.sqrt(u * u + v * v);
-                    let dir = (radToDeg(Math.atan2(-u, -v)) + 360) % 360;
-                    if (spd < 0.5) dir = 0;
+            const allPts = [{ height: 0, dir: surfDir, speedKt: surfSpd }, ...computedRows];
+            const maxH = allPts[allPts.length - 1].height;
+            if (targetH > maxH) return null;
 
-                    return { dir: Math.round(dir), spd: Math.round(spd) };
+            for (let i = 0; i < allPts.length - 1; i++) {
+                const p1 = allPts[i];
+                const p2 = allPts[i + 1];
+                if (targetH >= p1.height && targetH <= p2.height) {
+                    const ratio = (targetH - p1.height) / (p2.height - p1.height);
+                    const spd = Math.round(p1.speedKt + ratio * (p2.speedKt - p1.speedKt));
+                    let diff = p2.dir - p1.dir;
+                    if (diff > 180) diff -= 360;
+                    if (diff < -180) diff += 360;
+                    const dir = Math.round((p1.dir + ratio * diff + 360) % 360);
+                    return { dir, speedKt: spd };
                 }
             }
             return null;
         }
 
-        function formatDdfff(dir, spd) {
-            // Round direction to nearest 5 degrees (standard WMO PILOT)
-            let d5 = Math.round(dir / 5) * 5;
-            if (d5 === 0 && spd > 0) d5 = 360;
-            if (spd === 0) d5 = 0;
+        function generatePilotCodeAndLevels(surfDir, surfSpd) {
+            const wmo = document.getElementById('obs-wmo')?.value || '97270';
+            const dateVal = document.getElementById('obs-date')?.value || '2026-01-01';
+            const hourVal = document.getElementById('obs-hour')?.value || '00';
+            const obsName = document.getElementById('obs-name')?.value || 'Observer';
 
-            let dd = Math.floor(d5 / 10);
-            let fff = Math.round(spd);
+            const dayNum = parseInt(dateVal.split('-')[2] || '1', 10);
+            const YY = String(dayNum + 50).padStart(2, '0'); // Wind in knots indicator (+50)
+            const GG = hourVal;
+            const a4 = '4'; // Theodolite / PIBAL equipment indicator
 
-            // If direction ends in 5, add 500 to speed (WMO FM 32 rule)
-            if (d5 % 10 === 5) {
-                fff += 500;
-            }
-
-            const ddStr = String(dd).padStart(2, '0');
-            const fffStr = String(fff).padStart(3, '0');
-            return `${ddStr}${fffStr}`;
-        }
-
-        function generatePilotCodeAndReport() {
-            const dateVal = document.getElementById('obs-date').value;
-            const hourVal = document.getElementById('obs-hour').value || '00';
-            const wmoId = (document.getElementById('obs-wmo').value || '97270').padEnd(5, '0').slice(0, 5);
-            const obsName = document.getElementById('obs-name').value || 'Observer';
-
-            // Update print metadata
-            document.getElementById('print-wmo').textContent = wmoId;
-            document.getElementById('print-meta-summary').textContent = `${dateVal} | ${hourVal}:00 UTC | Obs: ${obsName}`;
-
-            // Day of month YY (add 50 for knots indicator per WMO FM 32)
-            let dayNum = 1;
-            if (dateVal) {
-                dayNum = parseInt(dateVal.split('-')[2], 10) || 1;
-            }
-            const YY = String(dayNum + 50).padStart(2, '0');
-            const GG = String(hourVal).padStart(2, '0');
-            const a4 = '4'; // Theodolite / optical tracking indicator
-
-            // Standard reporting heights in feet
-            const standardLevels = [
-                { ft: 0, label: 'Surface (0 ft)', codePrefix: '99001' },
-                { ft: 1000, label: '1.000 ft', codePrefix: '99123' },
-                { ft: 2000, label: '2.000 ft', codePrefix: null },
-                { ft: 3000, label: '3.000 ft', codePrefix: null },
-                { ft: 4000, label: '4.000 ft', codePrefix: '99457' },
-                { ft: 5000, label: '5.000 ft', codePrefix: null },
-                { ft: 7000, label: '7.000 ft', codePrefix: null },
-                { ft: 10000, label: '10.000 ft', codePrefix: '88124' },
-                { ft: 12000, label: '12.000 ft', codePrefix: null },
-                { ft: 14000, label: '14.000 ft', codePrefix: null },
-                { ft: 16000, label: '16.000 ft', codePrefix: '88680' },
-                { ft: 18000, label: '18.000 ft', codePrefix: null },
-                { ft: 20000, label: '20.000 ft', codePrefix: null }
+            const targetLevels = [
+                { label: 'Surface', height: 0, code: '99' },
+                { label: '1.000 ft', height: 300, code: '01' },
+                { label: '2.000 ft', height: 600, code: '02' },
+                { label: '3.000 ft', height: 900, code: '03' },
+                { label: '5.000 ft', height: 1500, code: '05' },
+                { label: '7.000 ft', height: 2100, code: '07' },
+                { label: '10.000 ft', height: 3000, code: '10' }
             ];
 
-            let codeGroups = ['PPAA', `${YY}${GG}${a4}`, wmoId];
-            let tableHtml = '';
+            const levelsBody = document.getElementById('standard-levels-body');
+            let levelRowsHTML = '';
+            let windGroups = [];
 
-            standardLevels.forEach(lvl => {
-                const interp = interpolateAtHeightFt(lvl.ft);
-                if (interp) {
-                    const ddfff = formatDdfff(interp.dir, interp.spd);
-                    if (lvl.codePrefix) {
-                        codeGroups.push(lvl.codePrefix);
-                    }
-                    codeGroups.push(ddfff);
-
-                    const meters = Math.round(lvl.ft * 0.3048);
-                    tableHtml += `
+            targetLevels.forEach(lvl => {
+                const w = interpolateWindAtHeight(lvl.height, surfDir, surfSpd);
+                if (w) {
+                    const ddfff = formatDDFFF(w.dir, w.speedKt);
+                    windGroups.push(ddfff);
+                    levelRowsHTML += `
                         <tr>
-                            <td class="py-2 px-3 font-bold text-white">${lvl.label}</td>
-                            <td class="py-2 px-3 text-slate-400">${meters} m</td>
-                            <td class="py-2 px-3 font-bold text-sky-400">${String(interp.dir).padStart(3, '0')}°</td>
-                            <td class="py-2 px-3 font-bold text-amber-400">${interp.spd} kt</td>
-                            <td class="py-2 px-3 font-bold text-emerald-400">${ddfff}</td>
+                            <td class="py-2 px-2.5 font-bold text-white">${lvl.label}</td>
+                            <td class="py-2 px-2.5 text-slate-300">${lvl.height} m</td>
+                            <td class="py-2 px-2.5 font-extrabold text-sky-400">${String(w.dir).padStart(3, '0')}°</td>
+                            <td class="py-2 px-2.5 font-extrabold text-amber-400">${w.speedKt} kt</td>
+                            <td class="py-2 px-2.5 font-extrabold text-emerald-400">${ddfff}</td>
                         </tr>
                     `;
                 }
             });
 
-            const finalPilotCode = codeGroups.join(' ') + '=';
-            document.getElementById('pilot-code-output').value = finalPilotCode;
-
-            const stdBody = document.getElementById('standard-levels-body');
-            if (tableHtml === '') {
-                stdBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500 font-sans">Data belum mencukupi untuk interpolasi lapisan standar.</td></tr>`;
-            } else {
-                stdBody.innerHTML = tableHtml;
+            if (levelsBody) {
+                levelsBody.innerHTML = levelRowsHTML || `<tr><td colspan="5" class="py-4 text-center text-slate-500 text-xs">Data belum cukup untuk interpolasi lapisan.</td></tr>`;
             }
-        }
 
-        function copyPilotCode() {
-            const textarea = document.getElementById('pilot-code-output');
-            textarea.select();
-            textarea.setSelectionRange(0, 99999);
-            try {
-                document.execCommand('copy');
-                showToast('Sandi PILOT berhasil disalin ke clipboard!', 'success');
-            } catch (err) {
-                showToast('Gagal menyalin sandi secara otomatis.', 'error');
-            }
-        }
+            const header = `PPAA ${YY}${GG}${a4} ${wmo}`;
+            const secGroup = windGroups.length > 0 ? `99001 ${windGroups.join(' ')}` : `99001 ${formatDDFFF(surfDir, surfSpd)}`;
+            const fullCode = `${header}\n${secGroup}=`;
 
-        function shareToWhatsApp() {
-            const pilotCode = document.getElementById('pilot-code-output').value;
-            const dateVal = document.getElementById('obs-date').value;
-            const hourVal = document.getElementById('obs-hour').value;
-            const obsName = document.getElementById('obs-name').value;
-            
-            const text = `*LAPORAN PIBAL - STAMET SULTAN MUHAMMAD SALAHUDDIN BIMA*\nTanggal: ${dateVal} | Jam: ${hourVal} UTC\nObserver: ${obsName}\n\n\`\`\`${pilotCode}\`\`\``;
-            const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-            window.open(waUrl, '_blank');
+            const outArea = document.getElementById('pilot-code-output');
+            if (outArea) outArea.value = fullCode;
+
+            const printWmo = document.getElementById('print-wmo');
+            const printMeta = document.getElementById('print-meta-summary');
+            if (printWmo) printWmo.textContent = wmo;
+            if (printMeta) printMeta.textContent = `${dateVal} ${hourVal}:00 UTC | Observer: ${obsName}`;
         }
 
         // =========================================================================
-        // 9. VERTICAL WIND PROFILE VISUALIZATION (CANVAS)
+        // 10. VERTICAL WIND PROFILE CHART & EXPORTS (CLIPBOARD, WA, CSV)
         // =========================================================================
         function drawWindProfileChart() {
             const canvas = document.getElementById('wind-profile-canvas');
             if (!canvas) return;
-            const container = canvas.parentElement;
-            const dpr = window.devicePixelRatio || 1;
-            const rect = container.getBoundingClientRect();
-            
-            if (rect.width === 0 || rect.height === 0) return;
-
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
             const ctx = canvas.getContext('2d');
-            ctx.scale(dpr, dpr);
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * 2;
+            canvas.height = rect.height * 2;
+            ctx.scale(2, 2);
 
-            const W = rect.width;
-            const H = rect.height;
-            ctx.clearRect(0, 0, W, H);
+            const w = rect.width;
+            const h = rect.height;
+            const isDark = document.documentElement.classList.contains('dark');
 
-            const pad = { top: 24, right: 45, bottom: 34, left: 48 };
-            const plotW = W - pad.left - pad.right;
-            const plotH = H - pad.top - pad.bottom;
+            ctx.clearRect(0, 0, w, h);
 
-            // Background Grid
-            ctx.strokeStyle = '#1e293b';
-            ctx.lineWidth = 1;
+            const padL = 44, padR = 20, padT = 16, padB = 28;
+            const plotW = w - padL - padR;
+            const plotH = h - padT - padB;
 
-            const maxH = Math.max(1500, ...computedRows.map(r => r.heightM));
-            const maxSpd = Math.max(25, Math.ceil(Math.max(...computedRows.map(r => r.windSpdKt)) / 5) * 5 + 5);
+            const surfSpd = parseFloat(document.getElementById('surface-spd')?.value) || 0;
+            const surfDir = parseFloat(document.getElementById('surface-dir')?.value) || 0;
+            const pts = [{ height: 0, speedKt: surfSpd, dir: surfDir }, ...computedRows];
 
-            // Horizontal Grid (Height)
-            const ySteps = 5;
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '10px JetBrains Mono, monospace';
-            ctx.textAlign = 'right';
-            ctx.textBaseline = 'middle';
-
-            for (let i = 0; i <= ySteps; i++) {
-                const valH = Math.round((maxH / ySteps) * i);
-                const y = pad.top + plotH - (i / ySteps) * plotH;
-                ctx.beginPath();
-                ctx.moveTo(pad.left, y);
-                ctx.lineTo(pad.left + plotW, y);
-                ctx.stroke();
-                ctx.fillText(`${valH}m`, pad.left - 6, y);
-            }
-
-            // Vertical Grid (Wind Speed in Knots)
-            const xSteps = 5;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'top';
-            for (let i = 0; i <= xSteps; i++) {
-                const valS = Math.round((maxSpd / xSteps) * i);
-                const x = pad.left + (i / xSteps) * plotW;
-                ctx.beginPath();
-                ctx.moveTo(x, pad.top);
-                ctx.lineTo(x, pad.top + plotH);
-                ctx.stroke();
-                ctx.fillText(`${valS}kt`, x, pad.top + plotH + 8);
-            }
-
-            // Axis Titles
-            ctx.fillStyle = '#38bdf8';
-            ctx.font = 'bold 10px Inter, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('Kecepatan Angin (Knot)', pad.left + plotW / 2, H - 12);
-
-            if (computedRows.length <= 1) {
-                ctx.fillStyle = '#64748b';
+            if (pts.length <= 1) {
+                ctx.fillStyle = isDark ? '#64748b' : '#475569';
                 ctx.font = '12px Inter, sans-serif';
-                ctx.fillText('Masukkan data sudut pengamatan untuk melihat grafik profil', W / 2, H / 2);
+                ctx.textAlign = 'center';
+                ctx.fillText('Rekam minimal 1 menit data untuk melihat grafik angin', w / 2, h / 2);
                 return;
             }
 
-            // Plot Speed Line
-            ctx.beginPath();
-            ctx.strokeStyle = '#38bdf8';
+            const maxH = Math.max(...pts.map(p => p.height), 500);
+            const maxSpd = Math.max(...pts.map(p => p.speedKt), 20) + 5;
+
+            // Grid lines
+            ctx.strokeStyle = isDark ? '#1e293b' : '#cbd5e1';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 4; i++) {
+                const y = padT + (plotH * i) / 4;
+                ctx.beginPath();
+                ctx.moveTo(padL, y);
+                ctx.lineTo(w - padR, y);
+                ctx.stroke();
+
+                const hLabel = Math.round(maxH * (1 - i / 4));
+                ctx.fillStyle = isDark ? '#94a3b8' : '#475569';
+                ctx.font = '10px JetBrains Mono, monospace';
+                ctx.textAlign = 'right';
+                ctx.fillText(`${hLabel}m`, padL - 6, y + 3);
+            }
+
+            // Wind speed curve
+            ctx.strokeStyle = '#0ea5e9';
             ctx.lineWidth = 2.5;
-            computedRows.forEach((row, idx) => {
-                const x = pad.left + (row.windSpdKt / maxSpd) * plotW;
-                const y = pad.top + plotH - (row.heightM / maxH) * plotH;
-                if (idx === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+            ctx.beginPath();
+            pts.forEach((p, idx) => {
+                const px = padL + (p.speedKt / maxSpd) * plotW;
+                const py = padT + plotH - (p.height / maxH) * plotH;
+                if (idx === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
             });
             ctx.stroke();
 
-            // Plot Data Points & Wind Direction Arrows on Right Margin
-            computedRows.forEach(row => {
-                const x = pad.left + (row.windSpdKt / maxSpd) * plotW;
-                const y = pad.top + plotH - (row.heightM / maxH) * plotH;
+            // Data points & direction labels
+            pts.forEach(p => {
+                const px = padL + (p.speedKt / maxSpd) * plotW;
+                const py = padT + plotH - (p.height / maxH) * plotH;
 
-                // Point dot
-                ctx.beginPath();
                 ctx.fillStyle = '#f59e0b';
-                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.beginPath();
+                ctx.arc(px, py, 3.5, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Wind Direction Arrow on the right column
-                const arrowX = pad.left + plotW + 22;
-                ctx.save();
-                ctx.translate(arrowX, y);
-                // Wind FROM direction: arrow points in direction wind is blowing TO (+180 deg)
-                ctx.rotate(degToRad(row.windDir + 180));
-                ctx.strokeStyle = '#34d399';
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.moveTo(0, 7);
-                ctx.lineTo(0, -7);
-                ctx.lineTo(-3, -3);
-                ctx.moveTo(0, -7);
-                ctx.lineTo(3, -3);
-                ctx.stroke();
-                ctx.restore();
+                ctx.fillStyle = isDark ? '#e2e8f0' : '#0f172a';
+                ctx.font = 'bold 9px JetBrains Mono, monospace';
+                ctx.textAlign = 'left';
+                ctx.fillText(`${p.dir}°/${p.speedKt}kt`, px + 6, py + 3);
             });
         }
 
-        window.addEventListener('resize', () => {
-            if (!document.getElementById('tab-report').classList.contains('hidden')) {
-                drawWindProfileChart();
-            }
-        });
+        function copyPilotCode() {
+            const textarea = document.getElementById('pilot-code-output');
+            if (!textarea) return;
+            textarea.select();
+            document.execCommand('copy');
+            showToast('Sandi PILOT FM 32 berhasil disalin!', 'success');
+        }
+
+        function shareToWhatsApp() {
+            const code = document.getElementById('pilot-code-output')?.value || '';
+            const dateVal = document.getElementById('obs-date')?.value || '';
+            const hourVal = document.getElementById('obs-hour')?.value || '';
+            const obsName = document.getElementById('obs-name')?.value || '';
+
+            const msg = `*LAPORAN PENGAMATAN PIBAL*\nStamet Sultan Muhammad Salahuddin Bima\nTanggal: ${dateVal} | Jam: ${hourVal} UTC\nObserver: ${obsName}\n\n\`\`\`\n${code}\n\`\`\``;
+            const waUrl = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        function exportToCSV() {
+            const wmo = document.getElementById('obs-wmo')?.value || '97270';
+            const dateStr = document.getElementById('obs-date')?.value || 'date';
+            const hourStr = document.getElementById('obs-hour')?.value || '00';
+
+            let csv = 'Menit,Elevasi(deg),Azimuth(deg),Tinggi(m),ArahAngin(deg),Kecepatan(kt)\n';
+            computedRows.forEach(r => {
+                csv += `${r.minute},${r.elevation},${r.azimuth},${r.height},${r.dir},${r.speedKt}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `PIBAL-RM_BIMA_${wmo}_${dateStr}_${hourStr}UTC.csv`;
+            link.click();
+            showToast('File CSV berhasil diunduh.', 'success');
+        }
 
         // =========================================================================
-        // 10. CSV EXPORT, SAMPLE DATA & LOCAL STORAGE PERSISTENCE
+        // 11. SESSION HISTORY (LAST 3 COMPLETED OBSERVATIONS + PDF PRINT)
         // =========================================================================
-        function exportToCSV() {
-            if (computedRows.length <= 1) {
-                showToast('Belum ada data pengamatan untuk diekspor.', 'warning');
+        function getSavedHistory() {
+            try {
+                const raw = localStorage.getItem('pibal_rm_bima_history');
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveSessionToHistory() {
+            try {
+                const history = getSavedHistory();
+                const now = new Date();
+                const entry = {
+                    id: Date.now(),
+                    savedAt: `${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')} UTC`,
+                    wmo: document.getElementById('obs-wmo').value || '97270',
+                    name: document.getElementById('obs-name').value || 'Observer',
+                    date: document.getElementById('obs-date').value || '',
+                    hour: document.getElementById('obs-hour').value || '00',
+                    rate: STANDARD_ASCENT_RATE,
+                    surfDir: document.getElementById('surface-dir').value || '0',
+                    surfSpd: document.getElementById('surface-spd').value || '0',
+                    readings: JSON.parse(JSON.stringify(readings)),
+                    pilotCode: document.getElementById('pilot-code-output').value || ''
+                };
+                history.unshift(entry);
+                const trimmed = history.slice(0, 3);
+                localStorage.setItem('pibal_rm_bima_history', JSON.stringify(trimmed));
+                renderHistoryList();
+            } catch (e) {}
+        }
+
+        function renderHistoryList() {
+            const container = document.getElementById('history-list-container');
+            if (!container) return;
+            const history = getSavedHistory();
+
+            if (history.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-3">Belum ada riwayat sesi yang diselesaikan.</p>`;
                 return;
             }
 
-            const dateVal = document.getElementById('obs-date').value;
-            const hourVal = document.getElementById('obs-hour').value;
-            const wmoId = document.getElementById('obs-wmo').value;
-            const obsName = document.getElementById('obs-name').value;
-            const pilotCode = document.getElementById('pilot-code-output').value;
-
-            let csv = [];
-            csv.push(['STASIUN METEOROLOGI SULTAN MUHAMMAD SALAHUDDIN BIMA']);
-            csv.push(['LAPORAN PENGAMATAN UDARA ATAS (PIBAL)']);
-            csv.push([`Tanggal: ${dateVal}`, `Jam: ${hourVal} UTC`, `WMO ID: ${wmoId}`, `Observer: ${obsName}`]);
-            csv.push([`Sandi PILOT: ${pilotCode}`]);
-            csv.push([]);
-            csv.push(['Menit', 'Ketinggian (m)', 'Ketinggian (ft)', 'Azimuth (deg)', 'Elevasi (deg)', 'Jarak Horizontal D (m)', 'X (m)', 'Y (m)', 'Arah Angin (deg)', 'Kecepatan Angin (knot)']);
-
-            computedRows.forEach(r => {
-                csv.push([
-                    r.minute,
-                    r.heightM,
-                    r.heightFt,
-                    r.azimuth !== null ? r.azimuth : '-',
-                    r.elevation !== null ? r.elevation : '-',
-                    r.distanceD,
-                    r.x,
-                    r.y,
-                    r.windDir,
-                    r.windSpdKt
-                ]);
-            });
-
-            const csvString = csv.map(row => row.join(',')).join('\n');
-            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `PIBAL_BIMA_${wmoId}_${dateVal}_${hourVal}UTC.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast('File CSV berhasil diunduh!', 'success');
+            container.innerHTML = history.map((item, idx) => `
+                <div class="bg-navy-950 border border-slate-800 rounded-xl p-3 flex items-center justify-between gap-2">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-1.5">
+                            <span class="px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono text-[10px] font-extrabold">#${idx + 1}</span>
+                            <span class="font-bold text-xs text-white truncate">${item.date} &bull; ${item.hour} UTC</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-0.5 truncate">
+                            ${item.readings.length} Menit &bull; Observer: ${item.name}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="restoreHistorySession(${item.id}, false)" title="Muat Data & Sandi" class="bg-navy-800 hover:bg-slate-700 text-sky-400 border border-slate-700 font-bold text-[11px] py-2 px-2.5 rounded-xl transition flex items-center gap-1">
+                            <i class="fa-solid fa-eye"></i>
+                            <span>Buka</span>
+                        </button>
+                        <button onclick="restoreHistorySession(${item.id}, true)" title="Cetak PDF Riwayat Ini" class="bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-[11px] py-2 px-2.5 rounded-xl shadow transition flex items-center gap-1">
+                            <i class="fa-solid fa-file-pdf"></i>
+                            <span>PDF</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function loadSampleData() {
-            // Realistic upper-air PIBAL observation dataset for Bima
-            document.getElementById('ascent-rate').value = 150;
-            document.getElementById('balloon-weight').value = '30';
-            document.getElementById('surface-dir').value = 120;
-            document.getElementById('surface-spd').value = 8;
+        function restoreHistorySession(id, triggerPrint = false) {
+            const history = getSavedHistory();
+            const item = history.find(h => h.id === id);
+            if (!item) return;
 
-            readings = [
-                { minute: 1, azimuth: 302.5, elevation: 31.2 },
-                { minute: 2, azimuth: 305.0, elevation: 29.8 },
-                { minute: 3, azimuth: 308.2, elevation: 28.5 },
-                { minute: 4, azimuth: 311.5, elevation: 27.1 },
-                { minute: 5, azimuth: 315.0, elevation: 26.0 },
-                { minute: 6, azimuth: 319.4, elevation: 25.2 },
-                { minute: 7, azimuth: 324.0, elevation: 24.5 },
-                { minute: 8, azimuth: 329.5, elevation: 23.8 },
-                { minute: 9, azimuth: 335.0, elevation: 23.1 },
-                { minute: 10, azimuth: 341.2, elevation: 22.4 },
-                { minute: 11, azimuth: 346.8, elevation: 21.8 },
-                { minute: 12, azimuth: 352.0, elevation: 21.2 },
-                { minute: 13, azimuth: 356.5, elevation: 20.5 },
-                { minute: 14, azimuth: 1.5, elevation: 19.8 }
-            ];
+            document.getElementById('obs-wmo').value = item.wmo;
+            document.getElementById('obs-name').value = item.name;
+            document.getElementById('obs-date').value = item.date;
+            document.getElementById('obs-hour').value = item.hour;
+            document.getElementById('surface-dir').value = item.surfDir;
+            document.getElementById('surface-spd').value = item.surfSpd;
 
-            editingMinute = 15;
-            currentInputs = { azimuth: '', elevation: '' };
-            updateNumpadUI();
+            readings = JSON.parse(JSON.stringify(item.readings));
+            editingMinute = readings.length > 0 ? Math.max(...readings.map(r => r.minute)) + 1 : 1;
+            isSessionCompleted = false;
+
             recalculateAll();
-            saveToLocalStorage();
-            showToast('14 menit data contoh berhasil dimuat! Cek Tab 3 untuk Sandi PILOT.', 'success');
+            drawWindProfileChart();
+            showToast(`Riwayat ${item.date} (${item.hour} UTC) dimuat.`, 'info');
+
+            if (triggerPrint) {
+                setTimeout(() => window.print(), 250);
+            }
         }
 
         function saveToLocalStorage() {
             try {
-                const payload = {
+                const state = {
+                    wmo: document.getElementById('obs-wmo').value,
+                    name: document.getElementById('obs-name').value,
+                    surfDir: document.getElementById('surface-dir').value,
+                    surfSpd: document.getElementById('surface-spd').value,
                     readings,
-                    meta: {
-                        date: document.getElementById('obs-date').value,
-                        hour: document.getElementById('obs-hour').value,
-                        name: document.getElementById('obs-name').value,
-                        wmo: document.getElementById('obs-wmo').value,
-                        weight: document.getElementById('balloon-weight').value,
-                        ascentRate: document.getElementById('ascent-rate').value,
-                        surfDir: document.getElementById('surface-dir').value,
-                        surfSpd: document.getElementById('surface-spd').value
-                    }
+                    isSessionCompleted
                 };
-                localStorage.setItem('pibal_keep_bima_v2', JSON.stringify(payload));
-            } catch (e) {
-                console.warn('LocalStorage save failed:', e);
-            }
+                localStorage.setItem('pibal_rm_bima_state', JSON.stringify(state));
+            } catch (e) {}
         }
 
         function loadFromLocalStorage() {
             try {
-                const raw = localStorage.getItem('pibal_keep_bima_v2');
+                const raw = localStorage.getItem('pibal_rm_bima_state');
                 if (!raw) return;
-                const data = JSON.parse(raw);
-                if (data.meta) {
-                    if (data.meta.date) document.getElementById('obs-date').value = data.meta.date;
-                    if (data.meta.hour) document.getElementById('obs-hour').value = data.meta.hour;
-                    if (data.meta.name) document.getElementById('obs-name').value = data.meta.name;
-                    if (data.meta.wmo) document.getElementById('obs-wmo').value = data.meta.wmo;
-                    if (data.meta.weight) document.getElementById('balloon-weight').value = data.meta.weight;
-                    if (data.meta.ascentRate) document.getElementById('ascent-rate').value = data.meta.ascentRate;
-                    if (data.meta.surfDir) document.getElementById('surface-dir').value = data.meta.surfDir;
-                    if (data.meta.surfSpd) document.getElementById('surface-spd').value = data.meta.surfSpd;
+                const state = JSON.parse(raw);
+                if (state.wmo) document.getElementById('obs-wmo').value = state.wmo;
+                if (state.name) document.getElementById('obs-name').value = state.name;
+
+                if (state.isSessionCompleted) {
+                    // Start fresh observation session automatically when reopened
+                    readings = [];
+                    editingMinute = 1;
+                    isSessionCompleted = false;
+                    saveToLocalStorage();
+                } else {
+                    if (state.surfDir !== undefined) document.getElementById('surface-dir').value = state.surfDir;
+                    if (state.surfSpd !== undefined) document.getElementById('surface-spd').value = state.surfSpd;
+                    if (Array.isArray(state.readings)) {
+                        readings = state.readings;
+                        if (readings.length > 0) {
+                            editingMinute = Math.max(...readings.map(r => r.minute)) + 1;
+                        }
+                    }
                 }
-                if (Array.isArray(data.readings) && data.readings.length > 0) {
-                    readings = data.readings;
-                    editingMinute = Math.max(...readings.map(r => r.minute)) + 1;
-                }
-            } catch (e) {
-                console.warn('LocalStorage load failed:', e);
-            }
+            } catch (e) {}
         }
 
-        // =========================================================================
-        // 11. UI UTILITIES (TOAST & CUSTOM MODAL)
-        // =========================================================================
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            
-            let colors = 'bg-navy-800 border-sky-500 text-white';
-            let icon = 'fa-circle-info text-sky-400';
-            if (type === 'success') {
-                colors = 'bg-navy-900 border-emerald-500 text-emerald-100';
-                icon = 'fa-circle-check text-emerald-400';
-            } else if (type === 'error') {
-                colors = 'bg-navy-900 border-rose-500 text-rose-100';
-                icon = 'fa-circle-exclamation text-rose-400';
-            } else if (type === 'warning') {
-                colors = 'bg-navy-900 border-amber-500 text-amber-100';
-                icon = 'fa-triangle-exclamation text-amber-400';
-            }
-
-            toast.className = `pointer-events-auto border-l-4 ${colors} rounded-xl p-3 shadow-2xl flex items-center gap-2.5 text-xs font-semibold transition-all duration-300 transform translate-x-0`;
-            toast.innerHTML = `<i class="fa-solid ${icon} text-base shrink-0"></i><span>${message}</span>`;
-
+            const colors = {
+                success: 'bg-emerald-950/95 border-emerald-500 text-emerald-200',
+                error: 'bg-rose-950/95 border-rose-500 text-rose-200',
+                warning: 'bg-amber-950/95 border-amber-500 text-amber-200',
+                info: 'bg-navy-900/95 border-sky-500 text-sky-200'
+            };
+            const icons = {
+                success: 'fa-circle-check text-emerald-400',
+                error: 'fa-circle-exclamation text-rose-400',
+                warning: 'fa-triangle-exclamation text-amber-400',
+                info: 'fa-circle-info text-sky-400'
+            };
+            toast.className = `w-full px-3.5 py-2.5 rounded-xl border shadow-xl flex items-center gap-2.5 text-xs font-semibold backdrop-blur-md transition-all duration-300 ${colors[type] || colors.info}`;
+            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-sm shrink-0"></i><span>${message}</span>`;
             container.appendChild(toast);
+
             setTimeout(() => {
                 toast.style.opacity = '0';
-                toast.style.transform = 'translateX(20px)';
+                toast.style.transform = 'translateY(-8px)';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        let modalCallback = null;
         function openModal(title, message, onConfirm) {
+            const modal = document.getElementById('custom-modal');
             document.getElementById('modal-title').textContent = title;
             document.getElementById('modal-message').textContent = message;
-            modalCallback = onConfirm;
-            const modal = document.getElementById('custom-modal');
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            confirmBtn.onclick = () => {
+                closeModal();
+                onConfirm();
+            };
             modal.classList.remove('hidden');
             modal.classList.add('flex');
         }
@@ -1978,15 +2006,7 @@
             const modal = document.getElementById('custom-modal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            modalCallback = null;
         }
-
-        document.getElementById('modal-confirm-btn').onclick = function() {
-            if (typeof modalCallback === 'function') {
-                modalCallback();
-            }
-            closeModal();
-        };
     </script>
 </body>
 </html>
