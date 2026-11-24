@@ -434,13 +434,17 @@
                     </div>
 
                     <div class="flex items-center gap-1.5">
-                        <button onclick="startTimer()" id="btn-timer-start" class="bg-emerald-500 hover:bg-emerald-600 text-navy-950 font-extrabold text-xs py-3 px-3.5 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-1.5 transition">
+                        <button onclick="startTimer()" id="btn-timer-start" class="bg-emerald-500 hover:bg-emerald-600 text-navy-950 font-extrabold text-xs py-3 px-3 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-1.5 transition">
                             <i class="fa-solid fa-play"></i>
                             <span>LEPAS BALON</span>
                         </button>
-                        <button onclick="pauseTimer()" id="btn-timer-pause" class="hidden bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-xs py-3 px-3.5 rounded-xl shadow-lg flex items-center gap-1.5 transition">
+                        <button onclick="pauseTimer()" id="btn-timer-pause" class="hidden bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-xs py-3 px-3 rounded-xl shadow-lg flex items-center gap-1.5 transition">
                             <i class="fa-solid fa-pause"></i>
                             <span>PAUSE</span>
+                        </button>
+                        <button onclick="stopAndFinishObservation()" id="btn-timer-stop" title="Selesai Merekam & Buka Sandi" class="hidden bg-rose-500 hover:bg-rose-600 text-white font-extrabold text-xs py-3 px-3 rounded-xl shadow-lg shadow-rose-500/20 flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                            <span>SELESAI</span>
                         </button>
                         <button onclick="resetTimerConfirm()" title="Reset Timer" class="bg-navy-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-400 border border-slate-700 font-bold text-xs p-3 rounded-xl transition">
                             <i class="fa-solid fa-rotate-left"></i>
@@ -796,6 +800,7 @@
         // =========================================================================
         let readings = [];
         let computedRows = [];
+        let isSessionCompleted = false;
 
         let timerInterval = null;
         let elapsedSeconds = 0;
@@ -1225,6 +1230,7 @@
             isTimerRunning = true;
             document.getElementById('btn-timer-start').classList.add('hidden');
             document.getElementById('btn-timer-pause').classList.remove('hidden');
+            document.getElementById('btn-timer-stop').classList.remove('hidden');
             document.getElementById('timer-status-text').textContent = 'Balon Mengudara — Pengamatan Aktif';
             document.getElementById('timer-status-text').className = 'text-[11px] font-bold text-emerald-400 mt-0.5';
             playBeep(1046, 0.2);
@@ -1284,6 +1290,28 @@
             document.getElementById('timer-status-text').className = 'text-[11px] font-semibold text-amber-400 mt-0.5';
         }
 
+        function stopAndFinishObservation() {
+            openModal('Selesai Merekam', 'Akhiri pengamatan balon saat ini dan lihat hasil Sandi PILOT? (Sesi berikutnya akan otomatis dimulai dari awal).', () => {
+                isTimerRunning = false;
+                clearInterval(timerInterval);
+                elapsedSeconds = 0;
+                updateTimerDisplay();
+
+                document.getElementById('btn-timer-pause').classList.add('hidden');
+                document.getElementById('btn-timer-stop').classList.add('hidden');
+                document.getElementById('btn-timer-start').classList.remove('hidden');
+                document.getElementById('btn-timer-start').innerHTML = '<i class="fa-solid fa-play"></i><span>LEPAS BALON</span>';
+                document.getElementById('timer-status-text').textContent = 'Pengamatan Selesai — Siap Sesi Baru';
+                document.getElementById('timer-status-text').className = 'text-[11px] font-bold text-sky-400 mt-0.5';
+                document.getElementById('timer-box').classList.remove('border-amber-500', 'border-emerald-500');
+
+                isSessionCompleted = true;
+                saveToLocalStorage();
+                switchTab('report');
+                showToast('Pengamatan selesai! Sandi PILOT siap disalin atau dikirim ke WA.', 'success');
+            });
+        }
+
         function resetTimerConfirm() {
             openModal('Reset Timer', 'Atur ulang stopwatch pengamatan kembali ke 00:00?', () => {
                 isTimerRunning = false;
@@ -1291,6 +1319,7 @@
                 elapsedSeconds = 0;
                 updateTimerDisplay();
                 document.getElementById('btn-timer-pause').classList.add('hidden');
+                document.getElementById('btn-timer-stop').classList.add('hidden');
                 document.getElementById('btn-timer-start').classList.remove('hidden');
                 document.getElementById('btn-timer-start').innerHTML = '<i class="fa-solid fa-play"></i><span>LEPAS BALON</span>';
                 document.getElementById('timer-status-text').textContent = 'Siap Lepas Balon';
@@ -1854,7 +1883,8 @@
                     rate: document.getElementById('ascent-rate').value,
                     surfDir: document.getElementById('surface-dir').value,
                     surfSpd: document.getElementById('surface-spd').value,
-                    readings
+                    readings,
+                    isSessionCompleted
                 };
                 localStorage.setItem('pibal_rm_bima_state', JSON.stringify(state));
             } catch (e) {}
@@ -1869,12 +1899,21 @@
                 if (state.name) document.getElementById('obs-name').value = state.name;
                 if (state.balloon) document.getElementById('balloon-weight').value = state.balloon;
                 if (state.rate) document.getElementById('ascent-rate').value = state.rate;
-                if (state.surfDir !== undefined) document.getElementById('surface-dir').value = state.surfDir;
-                if (state.surfSpd !== undefined) document.getElementById('surface-spd').value = state.surfSpd;
-                if (Array.isArray(state.readings)) {
-                    readings = state.readings;
-                    if (readings.length > 0) {
-                        editingMinute = Math.max(...readings.map(r => r.minute)) + 1;
+
+                if (state.isSessionCompleted) {
+                    // Start fresh observation session automatically when reopened
+                    readings = [];
+                    editingMinute = 1;
+                    isSessionCompleted = false;
+                    saveToLocalStorage();
+                } else {
+                    if (state.surfDir !== undefined) document.getElementById('surface-dir').value = state.surfDir;
+                    if (state.surfSpd !== undefined) document.getElementById('surface-spd').value = state.surfSpd;
+                    if (Array.isArray(state.readings)) {
+                        readings = state.readings;
+                        if (readings.length > 0) {
+                            editingMinute = Math.max(...readings.map(r => r.minute)) + 1;
+                        }
                     }
                 }
             } catch (e) {}
