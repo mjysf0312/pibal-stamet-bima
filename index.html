@@ -389,6 +389,23 @@
                     <span>Mulai Pengamatan Lapangan</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
+
+                <!-- PWA Install App Card -->
+                <div id="install-app-card" class="bg-sky-950/70 border border-sky-500/40 rounded-xl p-3 flex items-center justify-between gap-2.5">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-9 h-9 rounded-xl bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 shrink-0">
+                            <i class="fa-solid fa-mobile-screen-button text-base"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="text-xs font-extrabold text-white truncate">Pasang ke Layar Utama HP</div>
+                            <div class="text-[10px] text-slate-400 truncate">Tampilan layar penuh & bisa offline</div>
+                        </div>
+                    </div>
+                    <button onclick="installPWAApp()" class="bg-sky-500 hover:bg-sky-400 text-navy-950 font-extrabold text-xs py-2 px-3 rounded-xl shadow shrink-0 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Install App</span>
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -742,7 +759,36 @@
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
+                const card = document.getElementById('install-app-card');
+                if (card) card.classList.remove('hidden');
             });
+
+            window.addEventListener('appinstalled', () => {
+                deferredPrompt = null;
+                const card = document.getElementById('install-app-card');
+                if (card) card.classList.add('hidden');
+                showToast('Aplikasi PIBAL-RM BIMA berhasil terpasang di HP!', 'success');
+            });
+
+            // Hide install card if already running in standalone app mode
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+                const card = document.getElementById('install-app-card');
+                if (card) card.classList.add('hidden');
+            }
+        }
+
+        async function installPWAApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    deferredPrompt = null;
+                    const card = document.getElementById('install-app-card');
+                    if (card) card.classList.add('hidden');
+                }
+            } else {
+                showToast('Ketuk titik tiga (⋮) di pojok kanan atas Chrome lalu pilih "Tambahkan ke Layar Utama" / "Install app".', 'info');
+            }
         }
 
         // =========================================================================
