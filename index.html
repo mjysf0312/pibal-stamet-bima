@@ -9,12 +9,14 @@
     <meta name="apple-mobile-web-app-title" content="PIBAL-RM BIMA">
     <title>PIBAL-RM BIMA | Stasiun Meteorologi Sultan Muhammad Salahuddin Bima</title>
 
-    <!-- Dynamic PWA Manifest & Icon will be injected via JS -->
+    <!-- Dynamic PWA Manifest & Icon -->
     <link id="pwa-manifest" rel="manifest" href="">
     <link id="pwa-apple-icon" rel="apple-touch-icon" href="">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2pdf.js untuk ekspor PDF langsung di HP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -125,7 +127,6 @@
         html:not(.dark) .bg-sky-950\/70 {
             background-color: #e0f2fe !important;
         }
-        /* Keep white text on solid primary buttons */
         html:not(.dark) .bg-sky-500,
         html:not(.dark) .bg-emerald-500,
         html:not(.dark) .bg-amber-500,
@@ -136,11 +137,14 @@
             color: #ffffff !important;
         }
 
-        /* Official Print Styles */
+        /* Official Print Styles Fallback */
         @media print {
             body {
                 background: white !important;
                 color: black !important;
+                max-width: 100% !important;
+                border: none !important;
+                box-shadow: none !important;
             }
             .no-print {
                 display: none !important;
@@ -148,11 +152,19 @@
             .print-only {
                 display: block !important;
             }
+            #tab-report {
+                display: block !important;
+            }
             .print-card {
                 background: white !important;
                 border: 1px solid #94a3b8 !important;
                 color: black !important;
                 box-shadow: none !important;
+            }
+            textarea {
+                background: #f8fafc !important;
+                color: black !important;
+                border: 1px solid #64748b !important;
             }
             table th, table td {
                 border: 1px solid #64748b !important;
@@ -168,7 +180,7 @@
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed top-4 inset-x-3 z-50 flex flex-col items-center gap-2 pointer-events-none max-w-md mx-auto"></div>
 
-    <!-- Official Print Header (Only visible when printing) -->
+    <!-- Official Print Header (Only visible when printing via browser print) -->
     <div class="hidden print-only border-b-2 border-black pb-3 mb-4 text-center">
         <h2 class="text-xs font-bold uppercase tracking-wider">Badan Meteorologi, Klimatologi, dan Geofisika</h2>
         <h1 class="text-base font-extrabold uppercase">Stasiun Meteorologi Sultan Muhammad Salahuddin Bima</h1>
@@ -198,18 +210,15 @@
 
             <!-- Compact Controls: Theme + WakeLock + Clock -->
             <div class="flex items-center gap-1.5 shrink-0">
-                <!-- Day/Night Outdoor Theme Toggle -->
                 <button onclick="toggleOutdoorTheme()" id="theme-toggle-btn" title="Ganti Tema Siang (Outdoor) / Malam" class="w-8 h-8 rounded-xl bg-navy-950 border border-slate-800 flex items-center justify-center text-amber-400 hover:border-sky-500 transition">
                     <i id="theme-toggle-icon" class="fa-solid fa-sun text-xs"></i>
                 </button>
 
-                <!-- Sleek Wake Lock Pill -->
                 <button onclick="toggleWakeLockManual()" id="wakelock-badge" title="Kunci Layar Tetap Nyala" class="h-8 px-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center gap-1.5 transition">
                     <span id="wakelock-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
                     <span id="wakelock-text" class="text-[10px] font-extrabold text-amber-400 tracking-wide">ON</span>
                 </button>
 
-                <!-- Compact UTC / WITA Clock -->
                 <div class="bg-navy-950 border border-slate-800 rounded-xl px-2.5 py-1 text-right">
                     <div id="clock-utc" class="font-mono text-[11px] font-extrabold text-sky-400 leading-tight">--:--:-- UTC</div>
                     <div id="clock-wita" class="font-mono text-[9px] font-semibold text-slate-400 leading-tight">--:--:-- WITA</div>
@@ -247,7 +256,7 @@
                 <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-compass text-emerald-400"></i>
-                        <h2 class="font-bold text-sm text-white">Nivo Digital & Orientasi Sensor HP</h2>
+                        <h2 class="font-bold text-sm text-white">Nivo Digital &amp; Orientasi Sensor HP</h2>
                     </div>
                     <span id="sensor-status-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">STANDBY</span>
                 </div>
@@ -330,7 +339,17 @@
                     <!-- Nama Observer -->
                     <div>
                         <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nama Observer / Pengamat</label>
-                        <input type="text" id="obs-name" placeholder="Nama Pengamat" value="Observer Stamet Bima" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500">
+                        <input type="text" id="obs-name" list="observer-history-list" placeholder="Ketik nama pengamat..." value="" onchange="onObserverNameCommit();" onblur="onObserverNameCommit();" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-semibold text-white focus:outline-none focus:border-sky-500">
+                        <datalist id="observer-history-list"></datalist>
+                    </div>
+
+                    <!-- Jejak Nama Observer (Quick-Select Chips) -->
+                    <div id="observer-chips-wrapper" class="col-span-2 hidden bg-navy-950/80 border border-slate-800 rounded-xl p-2.5 space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold text-slate-400"><i class="fa-solid fa-user-check text-sky-400 mr-1"></i>Jejak Nama Observer (Ketuk untuk pilih):</span>
+                            <span class="text-[9px] text-slate-500">Otomatis tersimpan</span>
+                        </div>
+                        <div id="observer-chips-container" class="flex flex-wrap gap-1.5"></div>
                     </div>
 
                     <!-- Tanggal -->
@@ -349,6 +368,15 @@
                             <option value="18">18 UTC (02:00 WITA)</option>
                         </select>
                     </div>
+
+                    <!-- Pengaturan Jeda Pembacaan Pertama -->
+                    <div class="col-span-2">
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Waktu Pembacaan Pertama Setelah Lepas Balon</label>
+                        <select id="first-read-delay" onchange="saveToLocalStorage(); updateTimerDisplay();" class="w-full bg-navy-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-bold text-amber-400 focus:outline-none focus:border-sky-500">
+                            <option value="90" selected>01:30 (90 Detik - Jeda Awal, lanjut tiap 1 Menit)</option>
+                            <option value="60">01:00 (60 Detik - Standar BMKGSatu, lanjut tiap 1 Menit)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Surface Wind (Menit ke-0) -->
@@ -360,16 +388,16 @@
                     <div class="grid grid-cols-2 gap-2.5">
                         <div>
                             <label class="block text-[10px] text-slate-400 mb-1">Arah Angin (0 - 360°)</label>
-                            <input type="number" id="surface-dir" value="120" min="0" max="360" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-mono font-bold text-white focus:outline-none focus:border-sky-500">
+                            <input type="number" id="surface-dir" value="170" min="0" max="360" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-mono font-bold text-white focus:outline-none focus:border-sky-500">
                         </div>
                         <div>
                             <label class="block text-[10px] text-slate-400 mb-1">Kecepatan (Knot)</label>
-                            <input type="number" id="surface-spd" value="8" min="0" max="150" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-mono font-bold text-white focus:outline-none focus:border-sky-500">
+                            <input type="number" id="surface-spd" value="6" min="0" max="150" onchange="saveToLocalStorage(); recalculateAll();" class="w-full bg-navy-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-mono font-bold text-white focus:outline-none focus:border-sky-500">
                         </div>
                     </div>
                 </div>
 
-                <button onclick="switchTab('observe')" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-sm py-3.5 rounded-xl shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition">
+                <button onclick="onObserverNameCommit(); switchTab('observe');" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-sm py-3.5 rounded-xl shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition">
                     <span>Mulai Pengamatan Lapangan</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
@@ -382,7 +410,7 @@
                         </div>
                         <div class="min-w-0">
                             <div class="text-xs font-extrabold text-white truncate">Pasang ke Layar Utama HP</div>
-                            <div class="text-[10px] text-slate-400 truncate">Tampilan layar penuh & bisa offline</div>
+                            <div class="text-[10px] text-slate-400 truncate">Tampilan layar penuh &amp; bisa offline</div>
                         </div>
                     </div>
                     <button onclick="installPWAApp()" class="bg-sky-500 hover:bg-sky-400 text-navy-950 font-extrabold text-xs py-2 px-3 rounded-xl shadow shrink-0 flex items-center gap-1.5 transition">
@@ -401,9 +429,9 @@
             <!-- Compact Stopwatch Card -->
             <div id="timer-box" class="bg-navy-900 border-2 border-slate-800 rounded-2xl p-3.5 shadow-xl space-y-3 transition-colors duration-200">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-stopwatch mr-1 text-amber-400"></i>Timer 1 Menit</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-stopwatch mr-1 text-amber-400"></i>Timer Pembacaan</span>
                     <div class="flex items-center gap-2">
-                        <span class="text-[11px] font-bold text-sky-400">Target: Mnt <span id="target-minute-label">1</span></span>
+                        <span class="text-[11px] font-bold text-sky-400">Target: Bacaan <span id="target-minute-label">1</span> (<span id="target-time-label">01:30</span>)</span>
                         <button onclick="toggleAudioMute()" id="btn-audio-toggle" class="text-[11px] bg-navy-950 border border-slate-700 px-2 py-0.5 rounded-lg text-emerald-400 font-bold flex items-center gap-1">
                             <i class="fa-solid fa-volume-high"></i>
                             <span>Beep</span>
@@ -436,7 +464,7 @@
                     </div>
                 </div>
 
-                <!-- 60s Progress Bar -->
+                <!-- Interval Progress Bar -->
                 <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
                     <div id="minute-progress-bar" class="bg-sky-500 h-full transition-all duration-200" style="width: 0%"></div>
                 </div>
@@ -454,66 +482,67 @@
                 </button>
             </div>
 
-            <!-- Panel A: AUTO SENSOR HP MODE -->
+            <!-- Panel A: AUTO SENSOR HP MODE (Azimuth Kiri, Elevasi Kanan) -->
             <div id="panel-mode-auto" class="bg-navy-900 border border-emerald-500/40 rounded-2xl p-3.5 shadow-xl space-y-3">
                 <div id="auto-capture-banner" class="bg-emerald-950/60 border border-emerald-500/40 rounded-xl p-2.5 flex items-center justify-between transition-all">
                     <div class="flex items-center gap-2 min-w-0">
                         <i class="fa-solid fa-bolt text-emerald-400 text-sm shrink-0"></i>
                         <div class="min-w-0">
-                            <div id="auto-banner-title" class="text-[11px] font-extrabold text-emerald-300 truncate">REKAM OTOMATIS TIAP MENIT AKTIF</div>
-                            <div id="auto-banner-sub" class="text-[10px] text-slate-300 truncate">Terkunci otomatis setiap detik ke-60 (01:00, 02:00, dst).</div>
+                            <div id="auto-banner-title" class="text-[11px] font-extrabold text-emerald-300 truncate">REKAM OTOMATIS TIAP PEMBACAAN AKTIF</div>
+                            <div id="auto-banner-sub" class="text-[10px] text-slate-300 truncate">Bacaan 1 di 01:30, lalu otomatis tiap 1 menit berikutnya.</div>
                         </div>
                     </div>
-                    <span class="font-mono text-[11px] font-extrabold bg-navy-950 text-emerald-400 px-2 py-0.5 rounded-lg border border-emerald-500/30 shrink-0">MNT <span id="auto-next-min-badge">1</span></span>
+                    <span class="font-mono text-[11px] font-extrabold bg-navy-950 text-emerald-400 px-2 py-0.5 rounded-lg border border-emerald-500/30 shrink-0">BACA <span id="auto-next-min-badge">1</span></span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2.5">
                     <div class="bg-navy-950 border-2 border-sky-500/50 rounded-xl p-3 text-center">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400 block">Live Azimuth</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400 block">Live Azimuth (Kiri)</span>
                         <div id="live-auto-az" class="font-mono text-3xl font-extrabold text-white my-1">0.0°</div>
                     </div>
                     <div class="bg-navy-950 border-2 border-emerald-500/50 rounded-xl p-3 text-center">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block">Live Elevasi</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block">Live Elevasi (Kanan)</span>
                         <div id="live-auto-el" class="font-mono text-3xl font-extrabold text-white my-1">0.0°</div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2">
-                    <button onclick="activateRealSensors()" class="bg-navy-800 hover:bg-slate-700 text-sky-400 border border-slate-700 font-bold text-[11px] py-3 px-2 rounded-xl transition flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-compass"></i>
-                        <span>Sensor</span>
+                    <button onclick="skipFirstReading9999()" title="Isi Bacaan 1 dengan 9999 (seperti BMKGSatu)" class="bg-navy-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-bold text-[11px] py-3 px-2 rounded-xl transition flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-forward-step"></i>
+                        <span>Skip 1 (9999)</span>
                     </button>
                     <button onclick="triggerAutoRecordNow(true)" class="col-span-2 bg-emerald-500 hover:bg-emerald-600 text-navy-950 font-extrabold text-xs py-3 px-3 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-1.5 transition">
                         <i class="fa-solid fa-camera"></i>
-                        <span>Rekam Sekarang (Mnt <span id="btn-auto-now-min">1</span>)</span>
+                        <span>Rekam Sekarang (Bacaan <span id="btn-auto-now-min">1</span>)</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Panel B: INPUT MANUAL NUMPAD MODE -->
+            <!-- Panel B: INPUT MANUAL NUMPAD MODE (Azimuth Kiri, Elevasi Kanan) -->
             <div id="panel-mode-manual" class="hidden bg-navy-900 border border-slate-800 rounded-2xl p-3.5 shadow-xl space-y-2.5">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                     <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 rounded-lg bg-amber-500 text-navy-950 font-extrabold text-xs">MENIT KE-<span id="input-minute-badge">1</span></span>
-                        <span class="text-[11px] text-slate-400 font-mono" id="input-height-preview">150 m</span>
+                        <span class="px-2 py-0.5 rounded-lg bg-amber-500 text-navy-950 font-extrabold text-xs">PEMBACAAN KE-<span id="input-minute-badge">1</span></span>
+                        <span class="text-[11px] text-slate-400 font-mono" id="input-height-preview">500 ft</span>
                     </div>
                     <div class="flex items-center gap-1">
+                        <button onclick="skipFirstReading9999()" class="px-2 h-7 rounded-lg bg-navy-800 hover:bg-slate-700 text-amber-400 text-[10px] font-bold border border-slate-700 mr-1">9999</button>
                         <button onclick="changeEditingMinute(-1)" class="w-7 h-7 rounded-lg bg-navy-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-left"></i></button>
                         <button onclick="changeEditingMinute(1)" class="w-7 h-7 rounded-lg bg-navy-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-right"></i></button>
                     </div>
                 </div>
 
-                <!-- Dual Input Boxes -->
+                <!-- Dual Input Boxes: Azimuth Kiri, Elevasi Kanan -->
                 <div class="grid grid-cols-2 gap-2.5">
                     <div onclick="setActiveField('azimuth')" id="field-box-azimuth" class="cursor-pointer bg-navy-950 border-2 border-sky-500 rounded-xl p-2.5 transition">
-                        <span class="text-[10px] font-bold uppercase text-sky-400 block">Azimuth (0-360°)</span>
+                        <span class="text-[10px] font-bold uppercase text-sky-400 block">1. Azimuth (0-360°)</span>
                         <div class="font-mono text-2xl font-extrabold text-white mt-0.5 h-8 flex items-center">
                             <span id="val-azimuth"></span><span class="animate-pulse text-sky-400 ml-0.5" id="cursor-azimuth">|</span>
                         </div>
                     </div>
 
                     <div onclick="setActiveField('elevation')" id="field-box-elevation" class="cursor-pointer bg-navy-950 border-2 border-slate-800 rounded-xl p-2.5 transition">
-                        <span class="text-[10px] font-bold uppercase text-slate-400 block" id="label-elevation">Elevasi (0-90°)</span>
+                        <span class="text-[10px] font-bold uppercase text-slate-400 block" id="label-elevation">2. Elevasi (0-90°)</span>
                         <div class="font-mono text-2xl font-extrabold text-white mt-0.5 h-8 flex items-center">
                             <span id="val-elevation"></span><span class="hidden animate-pulse text-sky-400 ml-0.5" id="cursor-elevation">|</span>
                         </div>
@@ -541,21 +570,21 @@
                     <button onclick="numpadPress('.')" class="numpad-btn bg-navy-800 hover:bg-slate-700 text-white font-mono text-xl font-bold py-3 rounded-xl border border-slate-700/70">.</button>
                     <button onclick="saveMinuteReading()" class="numpad-btn col-span-2 bg-emerald-500 hover:bg-emerald-600 text-navy-950 font-extrabold text-xs py-3 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-check"></i>
-                        <span>SIMPAN MNT <span id="btn-save-min-num">1</span></span>
+                        <span>SIMPAN BACAAN <span id="btn-save-min-num">1</span></span>
                     </button>
                 </div>
             </div>
 
-            <!-- Recorded Observations Table Card -->
+            <!-- Recorded Observations Table Card (Azimuth Kiri, Elevasi Kanan) -->
             <div class="bg-navy-900 border border-slate-800 rounded-2xl p-3.5 shadow-xl space-y-2.5">
                 <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-1.5">
                         <i class="fa-solid fa-table-list text-sky-400 text-xs"></i>
-                        <h3 class="font-bold text-xs text-white">Hasil Rekam (<span id="total-minutes-count">0</span> Mnt)</h3>
+                        <h3 class="font-bold text-xs text-white">Hasil Rekam (<span id="total-minutes-count">0</span> Bacaan)</h3>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <button onclick="loadSampleData()" class="text-[10px] bg-navy-800 hover:bg-slate-700 text-sky-400 border border-slate-700 px-2 py-1 rounded-lg font-bold transition">
-                            Muat Data Contoh
+                            Data BMKGSatu
                         </button>
                         <button onclick="clearAllReadings()" class="text-[10px] bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 border border-rose-800/50 px-2 py-1 rounded-lg font-bold transition">
                             Hapus
@@ -567,18 +596,19 @@
                     <table class="w-full text-left border-collapse font-mono text-[11px]">
                         <thead>
                             <tr class="bg-navy-950 text-slate-400 border-b border-slate-800 text-[10px]">
-                                <th class="py-2 px-2">Mnt</th>
-                                <th class="py-2 px-2">El</th>
-                                <th class="py-2 px-2">Az</th>
-                                <th class="py-2 px-2">Tinggi</th>
+                                <th class="py-2 px-2">No</th>
+                                <th class="py-2 px-2 text-sky-400">Azimuth</th>
+                                <th class="py-2 px-2 text-emerald-400">Elevasi</th>
+                                <th class="py-2 px-2">Level</th>
                                 <th class="py-2 px-2 text-sky-400">Arah</th>
-                                <th class="py-2 px-2 text-amber-400">Kec(kt)</th>
+                                <th class="py-2 px-2 text-amber-400">Kec</th>
                                 <th class="py-2 px-1.5 text-center"></th>
                             </tr>
                         </thead>
                         <tbody id="plotting-table-body" class="divide-y divide-slate-800/70"></tbody>
                     </table>
                 </div>
+                <p class="text-[10px] text-slate-400">* Sesuai standar BMKGSatu, arah &amp; kecepatan angin (`dddff`) dihitung setiap 2 kali pembacaan (kelipatan 1.000 ft).</p>
             </div>
         </section>
 
@@ -592,12 +622,12 @@
                 <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-terminal text-emerald-400"></i>
-                        <h2 class="font-bold text-sm text-white">Sandi PILOT (FM 32) Otomatis</h2>
+                        <h2 class="font-bold text-sm text-white">Sandi PILOT (FM 32) Standar BMKG</h2>
                     </div>
-                    <span class="text-[10px] font-mono bg-navy-950 text-sky-400 px-2 py-0.5 rounded border border-slate-800">PPAA / PPBB</span>
+                    <span class="text-[10px] font-mono bg-navy-950 text-sky-400 px-2 py-0.5 rounded border border-slate-800">PPAA &amp; PPBB</span>
                 </div>
 
-                <textarea id="pilot-code-output" rows="4" readonly class="w-full bg-navy-950 border border-slate-700 rounded-xl p-3 font-mono text-xs sm:text-sm font-bold text-emerald-400 leading-relaxed focus:outline-none"></textarea>
+                <textarea id="pilot-code-output" rows="8" readonly class="w-full bg-navy-950 border border-slate-700 rounded-xl p-3 font-mono text-xs sm:text-sm font-bold text-emerald-400 leading-relaxed focus:outline-none"></textarea>
 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 no-print">
                     <button onclick="copyPilotCode()" class="bg-sky-500 hover:bg-sky-400 text-navy-950 font-extrabold text-xs py-2.5 px-3 rounded-xl shadow flex items-center justify-center gap-1.5 transition">
@@ -606,36 +636,60 @@
                     </button>
                     <button onclick="shareToWhatsApp()" class="bg-emerald-500 hover:bg-emerald-400 text-navy-950 font-extrabold text-xs py-2.5 px-3 rounded-xl shadow flex items-center justify-center gap-1.5 transition">
                         <i class="fa-brands fa-whatsapp text-sm"></i>
-                        <span>Kirim WA</span>
+                        <span>WA Az &amp; El</span>
                     </button>
                     <button onclick="exportToCSV()" class="bg-navy-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition">
                         <i class="fa-solid fa-file-csv"></i>
                         <span>Unduh CSV</span>
                     </button>
-                    <button onclick="window.print()" class="bg-navy-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition">
-                        <i class="fa-solid fa-print"></i>
-                        <span>Cetak PDF</span>
+                    <button onclick="exportToPDF()" class="bg-navy-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition">
+                        <i class="fa-solid fa-file-pdf text-rose-400"></i>
+                        <span>Unduh PDF</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Standard Aviation Levels Table -->
+            <!-- Auto-Input BMKGSoft / BMKGSatu Helper Card (Langsung Kirim Script ke WA) -->
+            <div class="bg-navy-900 border border-sky-500/40 rounded-2xl p-4 shadow-xl space-y-2.5 no-print">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-robot text-sky-400"></i>
+                        <h3 class="font-bold text-xs text-white">Auto-Input ke BMKGSoft / BMKGSatu (+ Submit)</h3>
+                    </div>
+                    <span class="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">TANPA SEND</span>
+                </div>
+                <p class="text-[11px] text-slate-300 leading-relaxed">
+                    Ketuk <b>Kirim Script ke WA</b> untuk langsung mengirim kode otomatis ke WhatsApp. Di PC, buka WA Web → salin kode tersebut → buka halaman input PIBAL <b>BMKGSoft</b> → tekan <b>F12 → Console</b> → tempel (<b>Ctrl+V</b>) → <b>Enter</b>. Kolom Azimuth &amp; Elevasi otomatis terisi dan tombol <b>Submit</b> terklik (tombol <b>Send</b> tetap diklik observer).
+                </p>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="sendBMKGSoftScriptToWA()" class="bg-emerald-500 hover:bg-emerald-400 text-navy-950 font-extrabold text-xs py-2.5 px-3 rounded-xl shadow flex items-center justify-center gap-1.5 transition">
+                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                        <span>Kirim Script ke WA</span>
+                    </button>
+                    <button onclick="copyAzElTabular()" class="bg-navy-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition">
+                        <i class="fa-solid fa-table-columns"></i>
+                        <span>Salin Data Az &amp; El</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Standard Aviation Levels Table (Tiap 2 Pembacaan / 1.000 ft) -->
             <div class="bg-navy-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5 print-card">
                 <div class="flex items-center justify-between">
                     <h3 class="font-bold text-xs text-white flex items-center gap-1.5">
                         <i class="fa-solid fa-layer-group text-amber-400"></i>
-                        <span>Lapisan Ketinggian Standar (Reporting Levels)</span>
+                        <span>Lapisan Ketinggian Standar (Tiap 2 Pembacaan)</span>
                     </h3>
                 </div>
                 <div class="overflow-x-auto rounded-xl border border-slate-800">
                     <table class="w-full text-left border-collapse font-mono text-[11px]">
                         <thead>
                             <tr class="bg-navy-950 text-slate-400 border-b border-slate-800 text-[10px]">
-                                <th class="py-2 px-2.5">Lapisan</th>
-                                <th class="py-2 px-2.5">Tinggi</th>
+                                <th class="py-2 px-2.5">Level</th>
+                                <th class="py-2 px-2.5">Bacaan</th>
                                 <th class="py-2 px-2.5 text-sky-400">Arah</th>
                                 <th class="py-2 px-2.5 text-amber-400">Kec</th>
-                                <th class="py-2 px-2.5 text-emerald-400">ddfff</th>
+                                <th class="py-2 px-2.5 text-emerald-400">dddff</th>
                             </tr>
                         </thead>
                         <tbody id="standard-levels-body" class="divide-y divide-slate-800/70"></tbody>
@@ -648,9 +702,9 @@
                 <div class="flex items-center justify-between">
                     <h3 class="font-bold text-xs text-white flex items-center gap-1.5">
                         <i class="fa-solid fa-chart-line text-sky-400"></i>
-                        <span>Profil Angin Vertikal & Vektor Arah</span>
+                        <span>Profil Angin Vertikal &amp; Vektor Arah</span>
                     </h3>
-                    <span class="text-[10px] text-slate-400">Kecepatan (kt) vs Tinggi (m)</span>
+                    <span class="text-[10px] text-slate-400">Kecepatan (kt) vs Level (ft)</span>
                 </div>
                 <div class="w-full h-64 bg-navy-950 border border-slate-800 rounded-xl p-2">
                     <canvas id="wind-profile-canvas" class="w-full h-full block"></canvas>
@@ -733,14 +787,13 @@
                 ]
             };
 
-            const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
-            const manifestUrl = URL.createObjectURL(manifestBlob);
+            const manifestUrl = 'data:application/manifest+json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(manifestObj))));
             const manifestEl = document.getElementById('pwa-manifest');
             if (manifestEl) manifestEl.href = manifestUrl;
 
             if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
                 const swCode = `
-                    const CACHE_NAME = 'pibal-rm-bima-v2';
+                    const CACHE_NAME = 'pibal-rm-bima-v4';
                     self.addEventListener('install', (e) => self.skipWaiting());
                     self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
                     self.addEventListener('fetch', (e) => {
@@ -772,7 +825,6 @@
                 showToast('Aplikasi PIBAL-RM BIMA berhasil terpasang di HP!', 'success');
             });
 
-            // Hide install card if already running in standalone app mode
             if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
                 const card = document.getElementById('install-app-card');
                 if (card) card.classList.add('hidden');
@@ -794,10 +846,120 @@
         }
 
         // =========================================================================
-        // 2. STATE MANAGEMENT & SCREEN WAKE LOCK API (KEEP SCREEN AWAKE)
+        // 2. OBSERVER NAME HISTORY ("JEJAK NAMA OBSERVER")
+        // =========================================================================
+        const OBSERVER_HISTORY_KEY = 'pibal_rm_bima_observers';
+
+        function getObserverHistory() {
+            try {
+                const raw = localStorage.getItem(OBSERVER_HISTORY_KEY);
+                const list = raw ? JSON.parse(raw) : [];
+                return Array.isArray(list) ? list : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveObserverHistory(list) {
+            try {
+                localStorage.setItem(OBSERVER_HISTORY_KEY, JSON.stringify(list.slice(0, 8)));
+            } catch (e) {}
+        }
+
+        function recordObserverName(rawName) {
+            const cleaned = (rawName || '').trim();
+            if (!cleaned) return;
+            const ignoredDefaults = ['observer', 'observer stamet bima'];
+            if (ignoredDefaults.includes(cleaned.toLowerCase())) return;
+
+            let list = getObserverHistory();
+            list = list.filter(n => n.toLowerCase() !== cleaned.toLowerCase());
+            list.unshift(cleaned);
+            saveObserverHistory(list);
+            renderObserverChips();
+        }
+
+        function onObserverNameCommit() {
+            const input = document.getElementById('obs-name');
+            if (!input) return;
+            recordObserverName(input.value);
+            saveToLocalStorage();
+            recalculateAll();
+        }
+
+        function selectObserverFromChip(name) {
+            const input = document.getElementById('obs-name');
+            if (!input) return;
+            input.value = name;
+            recordObserverName(name);
+            saveToLocalStorage();
+            recalculateAll();
+            showToast(`Observer dipilih: ${name}`, 'success');
+        }
+
+        function removeObserverFromHistory(name, event) {
+            if (event) event.stopPropagation();
+            let list = getObserverHistory();
+            list = list.filter(n => n.toLowerCase() !== name.toLowerCase());
+            saveObserverHistory(list);
+            renderObserverChips();
+            showToast(`Nama "${name}" dihapus dari jejak nama.`, 'info');
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderObserverChips() {
+            const wrapper = document.getElementById('observer-chips-wrapper');
+            const container = document.getElementById('observer-chips-container');
+            const datalist = document.getElementById('observer-history-list');
+            const currentVal = (document.getElementById('obs-name')?.value || '').trim().toLowerCase();
+            const list = getObserverHistory();
+
+            if (datalist) {
+                datalist.innerHTML = list.map(n => `<option value="${escapeHtml(n)}"></option>`).join('');
+            }
+
+            if (!wrapper || !container) return;
+
+            if (list.length === 0) {
+                wrapper.classList.add('hidden');
+                container.innerHTML = '';
+                return;
+            }
+
+            wrapper.classList.remove('hidden');
+            container.innerHTML = list.map(name => {
+                const isSelected = currentVal && name.toLowerCase() === currentVal;
+                const safeArg = name.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                const activeClasses = isSelected
+                    ? 'bg-sky-500 text-navy-950 border-sky-400 font-extrabold shadow-sm'
+                    : 'bg-navy-800 hover:bg-slate-700 text-slate-200 border-slate-700 font-semibold';
+
+                return `
+                    <div onclick="selectObserverFromChip('${safeArg}')" class="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs transition ${activeClasses}">
+                        <i class="fa-solid fa-user text-[10px] ${isSelected ? 'text-navy-950' : 'text-sky-400'}"></i>
+                        <span>${escapeHtml(name)}</span>
+                        <button type="button" onclick="removeObserverFromHistory('${safeArg}', event)" title="Hapus nama ini" class="ml-0.5 w-4 h-4 rounded-full inline-flex items-center justify-center hover:bg-black/20 text-[10px]">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // =========================================================================
+        // 3. STATE MANAGEMENT & SCREEN WAKE LOCK API
         // =========================================================================
         let readings = [];
         let computedRows = [];
+        let standardLayers = [];
         let isSessionCompleted = false;
 
         let timerInterval = null;
@@ -815,28 +977,31 @@
         let currentInputs = { azimuth: '', elevation: '' };
 
         let sensorActive = false;
-        let lockedSensorSource = null; // Lock to one reliable sensor stream to prevent conflict on Samsung
+        let lockedSensorSource = null;
         let rawSensor = { az: 0, pitch: 0, roll: 0 };
         let offsetSensor = { az: 0, pitch: 0, roll: 0 };
         let smoothedSensor = { az: 0, el: 0, pitch: 0, roll: 0 };
-        const SMOOTHING_ALPHA = 0.15; // Stronger damping for noisy mobile MEMS sensors
-        const STANDARD_ASCENT_RATE = 150; // Standar operasional 150 m/menit
+        const SMOOTHING_ALPHA = 0.15;
+        const ASCENT_RATE_FT = 500;
+        const ASCENT_RATE_M = 152.4;
 
         window.onload = function() {
             initPWA();
             initTheme();
             initDateTime();
             loadFromLocalStorage();
+            renderObserverChips();
             renderHistoryList();
             setRecordMode('auto');
             updateNumpadUI();
+            updateTimerDisplay();
             recalculateAll();
             startClocks();
             requestScreenWakeLock(false);
         };
 
         // =========================================================================
-        // 3. DAYLIGHT / NIGHT THEME & SCREEN WAKE LOCK
+        // 4. DAYLIGHT / NIGHT THEME & SCREEN WAKE LOCK
         // =========================================================================
         function initTheme() {
             const savedTheme = localStorage.getItem('pibal_rm_bima_theme') || 'light';
@@ -922,7 +1087,7 @@
         });
 
         // =========================================================================
-        // 4. DATE, UTC/WITA CLOCKS & SYNOPTIC HOUR AUTO-DETECT
+        // 5. DATE, UTC/WITA CLOCKS & SYNOPTIC HOUR AUTO-DETECT
         // =========================================================================
         function initDateTime() {
             const now = new Date();
@@ -983,7 +1148,7 @@
         }
 
         // =========================================================================
-        // 5. TAB NAVIGATION & BALLOON PARAMETERS
+        // 6. TAB NAVIGATION
         // =========================================================================
         function switchTab(tabName) {
             const tabs = ['setup', 'observe', 'report'];
@@ -1007,23 +1172,13 @@
             }
         }
 
-        function updateAscentRateByBalloon() {
-            const weight = document.getElementById('balloon-weight').value;
-            const rateInput = document.getElementById('ascent-rate');
-            if (weight === '30') rateInput.value = 150;
-            else if (weight === '100') rateInput.value = 180;
-            saveToLocalStorage();
-            updateNumpadUI();
-            recalculateAll();
-        }
-
         // =========================================================================
-        // 6. DIGITAL WATERPASS & MULTI-SENSOR ANDROID (ANTI-JITTER LOCKED)
+        // 7. DIGITAL WATERPASS & MULTI-SENSOR ANDROID
         // =========================================================================
         async function activateRealSensors() {
             const badge = document.getElementById('sensor-status-badge');
             const diag = document.getElementById('sensor-source-diag');
-            lockedSensorSource = null; // Reset source lock on activation
+            lockedSensorSource = null;
 
             try {
                 if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -1034,7 +1189,6 @@
                     }
                 }
 
-                // Clean previous listeners if re-activated
                 window.removeEventListener('deviceorientationabsolute', handleOrientationEvent, true);
                 window.removeEventListener('deviceorientation', handleOrientationEvent, true);
                 window.removeEventListener('devicemotion', handleMotionFallback, true);
@@ -1059,13 +1213,12 @@
             if (e.alpha === null && e.beta === null && e.gamma === null) return;
             const currentType = e.absolute ? 'deviceorientationabsolute' : 'deviceorientation';
 
-            // Lock to deviceorientationabsolute if available, otherwise standard deviceorientation
             if (!lockedSensorSource || lockedSensorSource === 'devicemotion') {
                 lockedSensorSource = currentType;
             } else if (lockedSensorSource === 'deviceorientation' && currentType === 'deviceorientationabsolute') {
                 lockedSensorSource = 'deviceorientationabsolute';
             } else if (lockedSensorSource !== currentType) {
-                return; // Ignore conflicting secondary stream
+                return;
             }
 
             let heading = 0;
@@ -1081,7 +1234,6 @@
         }
 
         function handleMotionFallback(e) {
-            // Only use accelerometer if orientation events never fired
             if (lockedSensorSource && lockedSensorSource !== 'devicemotion') return;
             const acc = e.accelerationIncludingGravity;
             if (!acc || acc.x === null) return;
@@ -1099,10 +1251,8 @@
             let calPitch = pitch - offsetSensor.pitch;
             let calRoll = roll - offsetSensor.roll;
 
-            // Elevation calculation when holding phone along sightline
             let rawElev = Math.max(0, Math.min(90, Math.abs(calPitch)));
 
-            // Deadband anti-jitter filter (ignore micro noise < 0.25 deg)
             let diffAz = calAz - smoothedSensor.az;
             if (diffAz > 180) diffAz -= 360;
             if (diffAz < -180) diffAz += 360;
@@ -1162,7 +1312,6 @@
                 diag.textContent = `Sumber: ${sourceName} (${azStr})`;
             }
 
-            // Bubble movement
             const bubble = document.getElementById('waterpass-bubble');
             const levelText = document.getElementById('level-indicator-text');
             if (bubble) {
@@ -1185,8 +1334,41 @@
         }
 
         // =========================================================================
-        // 7. STOPWATCH & AUTO-RECORD ENGINE
+        // 8. STOPWATCH & AUTO-RECORD ENGINE (JEDA AWAL 01:30 / 90 DETIK)
         // =========================================================================
+        function getFirstReadDelaySec() {
+            const sel = document.getElementById('first-read-delay');
+            return sel ? parseInt(sel.value, 10) || 90 : 90;
+        }
+
+        function formatSecToMMSS(sec) {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function getNextTargetInfo(currentElapsedSec) {
+            const firstDelay = getFirstReadDelaySec();
+            if (currentElapsedSec < firstDelay) {
+                return {
+                    readNumber: 1,
+                    targetSec: firstDelay,
+                    intervalDuration: firstDelay,
+                    secIntoInterval: currentElapsedSec
+                };
+            }
+            const extraSec = currentElapsedSec - firstDelay;
+            const completedAfterFirst = Math.floor(extraSec / 60);
+            const readNumber = 2 + completedAfterFirst;
+            const targetSec = firstDelay + (completedAfterFirst + 1) * 60;
+            return {
+                readNumber,
+                targetSec,
+                intervalDuration: 60,
+                secIntoInterval: extraSec % 60
+            };
+        }
+
         function playBeep(freq = 880, duration = 0.15) {
             if (!audioEnabled) return;
             try {
@@ -1218,6 +1400,7 @@
 
         function startTimer() {
             if (isTimerRunning) return;
+            onObserverNameCommit();
             isTimerRunning = true;
             isSessionCompleted = false;
             requestScreenWakeLock(false);
@@ -1233,29 +1416,29 @@
             playBeep(1046, 0.2);
 
             timerInterval = setInterval(() => {
+                const prevTarget = getNextTargetInfo(elapsedSeconds);
                 elapsedSeconds++;
                 updateTimerDisplay();
 
-                const secInMin = elapsedSeconds % 60;
                 const timerBox = document.getElementById('timer-box');
+                const secRemaining = prevTarget.targetSec - elapsedSeconds;
 
-                if (secInMin >= 55 && secInMin <= 59) {
-                    const left = 60 - secInMin;
-                    statusEl.textContent = `PERSIAPAN BACA SUDUT (${left} DETIK LAGI)...`;
+                if (secRemaining >= 1 && secRemaining <= 5) {
+                    statusEl.textContent = `PERSIAPAN BACAAN ${prevTarget.readNumber} (${secRemaining} DETIK LAGI)...`;
                     statusEl.className = 'text-[11px] font-extrabold text-amber-400 mt-0.5';
                     timerBox.classList.add('border-amber-500');
                     playBeep(660, 0.08);
-                } else if (secInMin === 0 && elapsedSeconds > 0) {
-                    const reachedMinute = Math.floor(elapsedSeconds / 60);
+                } else if (secRemaining === 0) {
+                    const reachedReadNum = prevTarget.readNumber;
                     playBeep(1200, 0.35);
                     timerBox.classList.remove('border-amber-500');
                     timerBox.classList.add('border-emerald-500');
 
                     if (recordMode === 'auto') {
-                        triggerAutoRecordNow(false, reachedMinute);
+                        triggerAutoRecordNow(false, reachedReadNum);
                     }
 
-                    statusEl.textContent = `MENIT KE-${reachedMinute} TERCATAT!`;
+                    statusEl.textContent = `PEMBACAAN KE-${reachedReadNum} TERCATAT!`;
                     statusEl.className = 'text-[11px] font-extrabold text-emerald-400 mt-0.5';
 
                     setTimeout(() => {
@@ -1281,7 +1464,8 @@
         }
 
         function stopAndFinishObservation() {
-            openModal('Selesai Merekam', 'Akhiri pengamatan balon saat ini, simpan ke riwayat, dan lihat hasil Sandi PILOT? (Sesi berikutnya akan otomatis dimulai dari awal).', () => {
+            openModal('Selesai Merekam', 'Akhiri pengamatan balon saat ini, simpan ke riwayat, dan lihat hasil Sandi PILOT?', () => {
+                onObserverNameCommit();
                 isTimerRunning = false;
                 clearInterval(timerInterval);
                 elapsedSeconds = 0;
@@ -1324,25 +1508,34 @@
         }
 
         function updateTimerDisplay() {
-            const mins = Math.floor(elapsedSeconds / 60);
-            const secs = elapsedSeconds % 60;
             const disp = document.getElementById('stopwatch-display');
-            if (disp) disp.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            if (disp) disp.textContent = formatSecToMMSS(elapsedSeconds);
 
+            const targetInfo = getNextTargetInfo(elapsedSeconds);
             const bar = document.getElementById('minute-progress-bar');
-            if (bar) bar.style.width = `${(secs / 60) * 100}%`;
+            if (bar) {
+                const pct = Math.min(100, (targetInfo.secIntoInterval / targetInfo.intervalDuration) * 100);
+                bar.style.width = `${pct}%`;
+            }
 
-            const targetMin = mins + 1;
             const tLabel = document.getElementById('target-minute-label');
+            const tTimeLabel = document.getElementById('target-time-label');
             const aBadge = document.getElementById('auto-next-min-badge');
             const bNow = document.getElementById('btn-auto-now-min');
-            if (tLabel) tLabel.textContent = targetMin;
-            if (aBadge) aBadge.textContent = targetMin;
-            if (bNow) bNow.textContent = targetMin;
+            const bannerSub = document.getElementById('auto-banner-sub');
+
+            if (tLabel) tLabel.textContent = targetInfo.readNumber;
+            if (tTimeLabel) tTimeLabel.textContent = formatSecToMMSS(targetInfo.targetSec);
+            if (aBadge) aBadge.textContent = targetInfo.readNumber;
+            if (bNow) bNow.textContent = targetInfo.readNumber;
+            if (bannerSub) {
+                const firstStr = formatSecToMMSS(getFirstReadDelaySec());
+                bannerSub.textContent = `Bacaan 1 di ${firstStr}, lalu otomatis tiap 1 menit berikutnya.`;
+            }
         }
 
         // =========================================================================
-        // 8. RECORDING MODES (AUTO SENSOR & MANUAL NUMPAD)
+        // 9. RECORDING MODES (AUTO SENSOR & MANUAL NUMPAD)
         // =========================================================================
         function setRecordMode(mode) {
             recordMode = mode;
@@ -1364,18 +1557,27 @@
             }
         }
 
+        function skipFirstReading9999() {
+            upsertReading(1, 9999, 9999, true);
+            editingMinute = 2;
+            currentInputs = { azimuth: '', elevation: '' };
+            setActiveField('azimuth');
+            updateNumpadUI();
+            showToast('Pembacaan 1 diisi 9999 (dilewati sesuai BMKGSatu).', 'info');
+        }
+
         function triggerAutoRecordNow(isManualTrigger = false, explicitMinute = null) {
             const nextMin = explicitMinute || (readings.length > 0 ? Math.max(...readings.map(r => r.minute)) + 1 : 1);
             const azVal = parseFloat(smoothedSensor.az.toFixed(1));
             const elVal = parseFloat(Math.max(0.5, smoothedSensor.el).toFixed(1));
 
-            upsertReading(nextMin, azVal, elVal);
+            upsertReading(nextMin, azVal, elVal, false);
             editingMinute = nextMin + 1;
             updateNumpadUI();
 
             if (isManualTrigger) {
                 playBeep(1100, 0.15);
-                showToast(`Menit ke-${nextMin} direkam (Az: ${azVal}°, El: ${elVal}°).`, 'success');
+                showToast(`Pembacaan ke-${nextMin} direkam (Az: ${azVal}°, El: ${elVal}°).`, 'success');
             }
         }
 
@@ -1441,10 +1643,9 @@
             const valAz = document.getElementById('val-azimuth');
             const valEl = document.getElementById('val-elevation');
 
-            const rate = STANDARD_ASCENT_RATE;
             if (badge) badge.textContent = editingMinute;
             if (saveNum) saveNum.textContent = editingMinute;
-            if (hPrev) hPrev.textContent = `${Math.round(editingMinute * rate)} m`;
+            if (hPrev) hPrev.textContent = `${editingMinute * ASCENT_RATE_FT} ft`;
             if (valAz) valAz.textContent = currentInputs.azimuth;
             if (valEl) valEl.textContent = currentInputs.elevation;
         }
@@ -1452,6 +1653,16 @@
         function saveMinuteReading() {
             const az = parseFloat(currentInputs.azimuth);
             const el = parseFloat(currentInputs.elevation);
+
+            if (az === 9999 && el === 9999) {
+                upsertReading(editingMinute, 9999, 9999, true);
+                showToast(`Pembacaan ke-${editingMinute} diisi 9999.`, 'info');
+                editingMinute++;
+                currentInputs = { azimuth: '', elevation: '' };
+                setActiveField('azimuth');
+                updateNumpadUI();
+                return;
+            }
 
             if (isNaN(az) || az < 0 || az > 360) {
                 showToast('Masukkan sudut Azimuth valid (0 - 360°).', 'error');
@@ -1464,8 +1675,8 @@
                 return;
             }
 
-            upsertReading(editingMinute, az, el);
-            showToast(`Data Menit ke-${editingMinute} disimpan.`, 'success');
+            upsertReading(editingMinute, az, el, false);
+            showToast(`Data Pembacaan ke-${editingMinute} disimpan.`, 'success');
 
             editingMinute++;
             currentInputs = { azimuth: '', elevation: '' };
@@ -1473,13 +1684,14 @@
             updateNumpadUI();
         }
 
-        function upsertReading(minute, azimuth, elevation) {
+        function upsertReading(minute, azimuth, elevation, skipped = false) {
             isSessionCompleted = false;
             const idx = readings.findIndex(r => r.minute === minute);
+            const entry = { minute, azimuth, elevation, skipped: skipped || (azimuth === 9999 && elevation === 9999) };
             if (idx >= 0) {
-                readings[idx] = { minute, azimuth, elevation };
+                readings[idx] = entry;
             } else {
-                readings.push({ minute, azimuth, elevation });
+                readings.push(entry);
             }
             readings.sort((a, b) => a.minute - b.minute);
             saveToLocalStorage();
@@ -1490,7 +1702,7 @@
             readings = readings.filter(r => r.minute !== minute);
             saveToLocalStorage();
             recalculateAll();
-            showToast(`Menit ke-${minute} dihapus.`, 'info');
+            showToast(`Pembacaan ke-${minute} dihapus.`, 'info');
         }
 
         function clearAllReadings() {
@@ -1507,73 +1719,122 @@
 
         function loadSampleData() {
             readings = [
-                { minute: 1, azimuth: 310.8, elevation: 6.5 },
-                { minute: 2, azimuth: 308.4, elevation: 7.2 },
-                { minute: 3, azimuth: 305.1, elevation: 8.1 },
-                { minute: 4, azimuth: 301.9, elevation: 9.0 },
-                { minute: 5, azimuth: 298.5, elevation: 10.2 },
-                { minute: 6, azimuth: 294.0, elevation: 11.5 },
-                { minute: 7, azimuth: 289.2, elevation: 12.8 },
-                { minute: 8, azimuth: 284.6, elevation: 14.1 },
-                { minute: 9, azimuth: 279.8, elevation: 15.6 },
-                { minute: 10, azimuth: 275.0, elevation: 17.0 }
+                { minute: 1, azimuth: 9999, elevation: 9999, skipped: true },
+                { minute: 2, azimuth: 348.4, elevation: 14.8, skipped: false },
+                { minute: 3, azimuth: 349.1, elevation: 14.9, skipped: false },
+                { minute: 4, azimuth: 349.9, elevation: 15.1, skipped: false },
+                { minute: 5, azimuth: 350.7, elevation: 15.8, skipped: false },
+                { minute: 6, azimuth: 352.6, elevation: 16.4, skipped: false },
+                { minute: 7, azimuth: 355.5, elevation: 17.7, skipped: false },
+                { minute: 8, azimuth: 358.3, elevation: 18.7, skipped: false },
+                { minute: 9, azimuth: 358.9, elevation: 19.3, skipped: false },
+                { minute: 10, azimuth: 0.5, elevation: 20.0, skipped: false },
+                { minute: 11, azimuth: 0.2, elevation: 20.7, skipped: false },
+                { minute: 12, azimuth: 35.1, elevation: 21.5, skipped: false },
+                { minute: 13, azimuth: 358.5, elevation: 22.2, skipped: false },
+                { minute: 14, azimuth: 355.1, elevation: 23.0, skipped: false },
+                { minute: 15, azimuth: 351.8, elevation: 22.1, skipped: false }
             ];
-            editingMinute = 11;
+            document.getElementById('surface-dir').value = '170';
+            document.getElementById('surface-spd').value = '6';
+            editingMinute = 16;
             isSessionCompleted = false;
             saveToLocalStorage();
             updateNumpadUI();
             recalculateAll();
-            showToast('10 menit data contoh PIBAL dimuat.', 'success');
+            showToast('15 data pembacaan contoh (1.000 - 7.000 ft) dimuat.', 'success');
         }
 
         // =========================================================================
-        // 9. PIBAL TRIGONOMETRY & WIND CALCULATION ENGINE
+        // 10. PIBAL TRIGONOMETRY & WIND CALCULATION ENGINE (STANDAR BMKGSATU)
         // =========================================================================
+        function roundToNearest5(deg) {
+            let d = Math.round(deg / 5) * 5;
+            d = ((d % 360) + 360) % 360;
+            if (d === 0) d = 360;
+            return d;
+        }
+
+        function formatDDDFF(dirDeg, speedKt) {
+            const spd = Math.round(speedKt);
+            if (spd === 0) return '00000';
+            let ddd = roundToNearest5(dirDeg);
+            let ff = spd;
+            if (ff >= 100) {
+                ddd += 500;
+                ff -= 100;
+            }
+            return `${String(ddd).padStart(3, '0')}${String(ff).padStart(2, '0')}`;
+        }
+
         function recalculateAll() {
-            const rate = STANDARD_ASCENT_RATE;
             const surfDir = parseFloat(document.getElementById('surface-dir')?.value) || 0;
             const surfSpd = parseFloat(document.getElementById('surface-spd')?.value) || 0;
 
             computedRows = [];
-            let prevX = 0;
-            let prevY = 0;
-            let prevTimeSec = 0;
+            standardLayers = [];
 
+            const posByRead = {};
             readings.forEach(r => {
-                const h = r.minute * rate;
-                const elRad = (r.elevation * Math.PI) / 180;
-                const azRad = (r.azimuth * Math.PI) / 180;
+                const heightFt = r.minute * ASCENT_RATE_FT;
+                const heightM = r.minute * ASCENT_RATE_M;
+                const isSkipped = r.skipped || r.azimuth === 9999 || r.elevation === 9999;
 
-                const horizDist = h / Math.tan(elRad);
-                const x = horizDist * Math.sin(azRad);
-                const y = horizDist * Math.cos(azRad);
-
-                const dt = (r.minute * 60) - prevTimeSec;
-                const dx = x - prevX;
-                const dy = y - prevY;
-
-                const u = dx / dt;
-                const v = dy / dt;
-                const speedMs = Math.hypot(u, v);
-                const speedKt = speedMs * 1.94384;
-
-                // Meteorological wind direction (direction wind blows FROM)
-                let dirDeg = (Math.atan2(-u, -v) * 180) / Math.PI;
-                if (dirDeg < 0) dirDeg += 360;
+                if (!isSkipped && r.elevation > 0) {
+                    const elRad = (r.elevation * Math.PI) / 180;
+                    const azRad = (r.azimuth * Math.PI) / 180;
+                    const horizDistM = heightM / Math.tan(elRad);
+                    const x = horizDistM * Math.sin(azRad);
+                    const y = horizDistM * Math.cos(azRad);
+                    posByRead[r.minute] = { x, y, heightFt, heightM };
+                }
 
                 computedRows.push({
                     minute: r.minute,
-                    elevation: r.elevation,
                     azimuth: r.azimuth,
-                    height: Math.round(h),
-                    horizDist: Math.round(horizDist),
-                    dir: Math.round(dirDeg) % 360,
-                    speedKt: Math.round(speedKt)
+                    elevation: r.elevation,
+                    skipped: isSkipped,
+                    heightFt,
+                    dir: null,
+                    speedKt: null,
+                    dddff: null
                 });
+            });
 
-                prevX = x;
-                prevY = y;
-                prevTimeSec = r.minute * 60;
+            let prevAnchor = { x: 0, y: 0, minute: 0 };
+
+            computedRows.forEach(row => {
+                if (row.minute % 2 === 0 && posByRead[row.minute]) {
+                    const curr = posByRead[row.minute];
+                    const dtSec = (row.minute - prevAnchor.minute) * 60;
+                    const dx = curr.x - prevAnchor.x;
+                    const dy = curr.y - prevAnchor.y;
+
+                    const u = dx / dtSec;
+                    const v = dy / dtSec;
+                    const speedMs = Math.hypot(u, v);
+                    const speedKt = Math.round(speedMs * 1.94384);
+
+                    let dirDeg = (Math.atan2(-u, -v) * 180) / Math.PI;
+                    if (dirDeg < 0) dirDeg += 360;
+                    const roundedDir = speedKt === 0 ? 0 : roundToNearest5(dirDeg);
+                    const dddff = formatDDDFF(roundedDir, speedKt);
+
+                    row.dir = roundedDir;
+                    row.speedKt = speedKt;
+                    row.dddff = dddff;
+
+                    standardLayers.push({
+                        levelFt: row.heightFt,
+                        readPair: `${row.minute - 1} - ${row.minute}`,
+                        minute: row.minute,
+                        dir: roundedDir,
+                        speedKt,
+                        dddff
+                    });
+
+                    prevAnchor = { x: curr.x, y: curr.y, minute: row.minute };
+                }
             });
 
             renderPlottingTable();
@@ -1591,112 +1852,122 @@
                 return;
             }
 
-            tbody.innerHTML = computedRows.map(row => `
-                <tr class="hover:bg-navy-950/60">
-                    <td class="py-2 px-2 font-bold text-white">${row.minute}</td>
-                    <td class="py-2 px-2 text-emerald-400 font-bold">${row.elevation.toFixed(1)}°</td>
-                    <td class="py-2 px-2 text-sky-400 font-bold">${row.azimuth.toFixed(1)}°</td>
-                    <td class="py-2 px-2 text-slate-300">${row.height}m</td>
-                    <td class="py-2 px-2 font-extrabold text-sky-400">${String(row.dir).padStart(3, '0')}°</td>
-                    <td class="py-2 px-2 font-extrabold text-amber-400">${row.speedKt}</td>
-                    <td class="py-2 px-1.5 text-center">
-                        <button onclick="deleteReading(${row.minute})" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+            tbody.innerHTML = computedRows.map(row => {
+                const azDisp = row.skipped ? '9999' : `${row.azimuth.toFixed(1)}°`;
+                const elDisp = row.skipped ? '9999' : `${row.elevation.toFixed(1)}°`;
+                const dirDisp = row.dir !== null ? `${String(row.dir).padStart(3, '0')}°` : '<span class="text-slate-500">-</span>';
+                const spdDisp = row.speedKt !== null ? `${row.speedKt} kt` : '<span class="text-slate-500">-</span>';
+                const rowHighlight = row.dddff ? 'bg-sky-950/20' : '';
 
-        function formatDDFFF(dirDeg, speedKt) {
-            let d = Math.round(dirDeg / 5) * 5;
-            if (d === 360) d = 0;
-            let dd = Math.floor(d / 10);
-            let fff = Math.round(speedKt);
-            if (d % 10 === 5) {
-                dd += 50;
-            }
-            if (fff >= 100) {
-                dd += 50;
-                fff -= 100;
-            }
-            return `${String(dd).padStart(2, '0')}${String(fff).padStart(3, '0')}`;
-        }
-
-        function interpolateWindAtHeight(targetH, surfDir, surfSpd) {
-            if (targetH === 0) return { dir: Math.round(surfDir), speedKt: Math.round(surfSpd) };
-            if (computedRows.length === 0) return null;
-
-            const exact = computedRows.find(r => r.height === targetH);
-            if (exact) return { dir: exact.dir, speedKt: exact.speedKt };
-
-            const allPts = [{ height: 0, dir: surfDir, speedKt: surfSpd }, ...computedRows];
-            const maxH = allPts[allPts.length - 1].height;
-            if (targetH > maxH) return null;
-
-            for (let i = 0; i < allPts.length - 1; i++) {
-                const p1 = allPts[i];
-                const p2 = allPts[i + 1];
-                if (targetH >= p1.height && targetH <= p2.height) {
-                    const ratio = (targetH - p1.height) / (p2.height - p1.height);
-                    const spd = Math.round(p1.speedKt + ratio * (p2.speedKt - p1.speedKt));
-                    let diff = p2.dir - p1.dir;
-                    if (diff > 180) diff -= 360;
-                    if (diff < -180) diff += 360;
-                    const dir = Math.round((p1.dir + ratio * diff + 360) % 360);
-                    return { dir, speedKt: spd };
-                }
-            }
-            return null;
+                return `
+                    <tr class="hover:bg-navy-950/60 ${rowHighlight}">
+                        <td class="py-2 px-2 font-bold text-white">${row.minute}</td>
+                        <td class="py-2 px-2 text-sky-400 font-bold">${azDisp}</td>
+                        <td class="py-2 px-2 text-emerald-400 font-bold">${elDisp}</td>
+                        <td class="py-2 px-2 text-slate-300">${row.heightFt}ft</td>
+                        <td class="py-2 px-2 font-extrabold text-sky-400">${dirDisp}</td>
+                        <td class="py-2 px-2 font-extrabold text-amber-400">${spdDisp}</td>
+                        <td class="py-2 px-1.5 text-center">
+                            <button onclick="deleteReading(${row.minute})" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function generatePilotCodeAndLevels(surfDir, surfSpd) {
             const wmo = document.getElementById('obs-wmo')?.value || '97270';
-            const dateVal = document.getElementById('obs-date')?.value || '2026-01-01';
+            const dateVal = document.getElementById('obs-date')?.value || '2026-11-25';
             const hourVal = document.getElementById('obs-hour')?.value || '00';
             const obsName = document.getElementById('obs-name')?.value || 'Observer';
 
             const dayNum = parseInt(dateVal.split('-')[2] || '1', 10);
-            const YY = String(dayNum + 50).padStart(2, '0'); // Wind in knots indicator (+50)
+            const DD = String(dayNum).padStart(2, '0');
+            const YY = String(dayNum + 50).padStart(2, '0');
             const GG = hourVal;
-            const a4 = '4'; // Theodolite / PIBAL equipment indicator
+            const a4 = '1';
 
-            const targetLevels = [
-                { label: 'Surface', height: 0, code: '99' },
-                { label: '1.000 ft', height: 300, code: '01' },
-                { label: '2.000 ft', height: 600, code: '02' },
-                { label: '3.000 ft', height: 900, code: '03' },
-                { label: '5.000 ft', height: 1500, code: '05' },
-                { label: '7.000 ft', height: 2100, code: '07' },
-                { label: '10.000 ft', height: 3000, code: '10' }
-            ];
+            const surfRoundedDir = Math.round(surfSpd) === 0 ? 0 : roundToNearest5(surfDir);
+            const surfDDDFF = formatDDDFF(surfRoundedDir, surfSpd);
 
             const levelsBody = document.getElementById('standard-levels-body');
-            let levelRowsHTML = '';
-            let windGroups = [];
+            let levelRowsHTML = `
+                <tr>
+                    <td class="py-2 px-2.5 font-bold text-white">Surface</td>
+                    <td class="py-2 px-2.5 text-slate-300">0 (Permukaan)</td>
+                    <td class="py-2 px-2.5 font-extrabold text-sky-400">${String(surfRoundedDir).padStart(3, '0')}°</td>
+                    <td class="py-2 px-2.5 font-extrabold text-amber-400">${Math.round(surfSpd)} kt</td>
+                    <td class="py-2 px-2.5 font-extrabold text-emerald-400">${surfDDDFF}</td>
+                </tr>
+            `;
 
-            targetLevels.forEach(lvl => {
-                const w = interpolateWindAtHeight(lvl.height, surfDir, surfSpd);
-                if (w) {
-                    const ddfff = formatDDFFF(w.dir, w.speedKt);
-                    windGroups.push(ddfff);
-                    levelRowsHTML += `
-                        <tr>
-                            <td class="py-2 px-2.5 font-bold text-white">${lvl.label}</td>
-                            <td class="py-2 px-2.5 text-slate-300">${lvl.height} m</td>
-                            <td class="py-2 px-2.5 font-extrabold text-sky-400">${String(w.dir).padStart(3, '0')}°</td>
-                            <td class="py-2 px-2.5 font-extrabold text-amber-400">${w.speedKt} kt</td>
-                            <td class="py-2 px-2.5 font-extrabold text-emerald-400">${ddfff}</td>
-                        </tr>
-                    `;
-                }
+            standardLayers.forEach(l => {
+                levelRowsHTML += `
+                    <tr>
+                        <td class="py-2 px-2.5 font-bold text-white">${l.levelFt} ft</td>
+                        <td class="py-2 px-2.5 text-slate-300">Bacaan ${l.readPair}</td>
+                        <td class="py-2 px-2.5 font-extrabold text-sky-400">${String(l.dir).padStart(3, '0')}°</td>
+                        <td class="py-2 px-2.5 font-extrabold text-amber-400">${l.speedKt} kt</td>
+                        <td class="py-2 px-2.5 font-extrabold text-emerald-400">${l.dddff}</td>
+                    </tr>
+                `;
             });
 
-            if (levelsBody) {
-                levelsBody.innerHTML = levelRowsHTML || `<tr><td colspan="5" class="py-4 text-center text-slate-500 text-xs">Data belum cukup untuk interpolasi lapisan.</td></tr>`;
+            if (levelsBody) levelsBody.innerHTML = levelRowsHTML;
+
+            const layer5000 = standardLayers.find(l => l.levelFt === 5000);
+            const layer10000 = standardLayers.find(l => l.levelFt === 10000);
+
+            let ppaaLines = [
+                `UPID53 WADB ${DD}${GG}00`,
+                `PPAA ${YY}${GG}${a4} ${wmo}`
+            ];
+
+            if (layer5000 && layer10000) {
+                ppaaLines.push(`55185 ${layer5000.dddff} 55170 ${layer10000.dddff}`);
+            } else if (layer5000) {
+                ppaaLines.push(`55185 ${layer5000.dddff}`);
+            } else {
+                ppaaLines.push(`55/// /////`);
+            }
+            ppaaLines.push(`77999=`);
+
+            const levelMap = { 0: surfDDDFF };
+            standardLayers.forEach(l => {
+                const kFt = Math.round(l.levelFt / 1000);
+                levelMap[kFt] = l.dddff;
+            });
+
+            const maxKFt = standardLayers.length > 0 ? Math.max(...standardLayers.map(l => Math.round(l.levelFt / 1000))) : 0;
+            let ppbbGroups = [];
+
+            for (let base = 0; base <= maxKFt; base += 3) {
+                let indicatorDigits = '';
+                let dataWords = [];
+
+                for (let offset = 0; offset < 3; offset++) {
+                    const k = base + offset;
+                    if (k === 0) {
+                        indicatorDigits += '/';
+                        dataWords.push(levelMap[0]);
+                    } else if (levelMap[k]) {
+                        indicatorDigits += String(k % 10);
+                        dataWords.push(levelMap[k]);
+                    } else {
+                        indicatorDigits += '/';
+                    }
+                }
+                ppbbGroups.push(`90${indicatorDigits} ${dataWords.join(' ')}`);
             }
 
-            const header = `PPAA ${YY}${GG}${a4} ${wmo}`;
-            const secGroup = windGroups.length > 0 ? `99001 ${windGroups.join(' ')}` : `99001 ${formatDDFFF(surfDir, surfSpd)}`;
-            const fullCode = `${header}\n${secGroup}=`;
+            let ppbbLines = [
+                `UGID53 WADB ${DD}${GG}00`,
+                `PPBB ${YY}${GG}${a4} ${wmo}`,
+                ...ppbbGroups
+            ];
+            ppbbLines[ppbbLines.length - 1] += '=';
+
+            const fullCode = `${ppaaLines.join('\n')}\n\n${ppbbLines.join('\n')}`;
 
             const outArea = document.getElementById('pilot-code-output');
             if (outArea) outArea.value = fullCode;
@@ -1708,7 +1979,7 @@
         }
 
         // =========================================================================
-        // 10. VERTICAL WIND PROFILE CHART & EXPORTS (CLIPBOARD, WA, CSV)
+        // 11. VERTICAL WIND PROFILE CHART & EXPORTS (WA, CSV, PDF, BMKGSOFT WA SCRIPT)
         // =========================================================================
         function drawWindProfileChart() {
             const canvas = document.getElementById('wind-profile-canvas');
@@ -1725,26 +1996,28 @@
 
             ctx.clearRect(0, 0, w, h);
 
-            const padL = 44, padR = 20, padT = 16, padB = 28;
+            const padL = 48, padR = 24, padT = 16, padB = 28;
             const plotW = w - padL - padR;
             const plotH = h - padT - padB;
 
             const surfSpd = parseFloat(document.getElementById('surface-spd')?.value) || 0;
             const surfDir = parseFloat(document.getElementById('surface-dir')?.value) || 0;
-            const pts = [{ height: 0, speedKt: surfSpd, dir: surfDir }, ...computedRows];
+            const pts = [
+                { heightFt: 0, speedKt: surfSpd, dir: surfDir },
+                ...standardLayers.map(l => ({ heightFt: l.levelFt, speedKt: l.speedKt, dir: l.dir }))
+            ];
 
             if (pts.length <= 1) {
                 ctx.fillStyle = isDark ? '#64748b' : '#475569';
                 ctx.font = '12px Inter, sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText('Rekam minimal 1 menit data untuk melihat grafik angin', w / 2, h / 2);
+                ctx.fillText('Rekam minimal 2 pembacaan (1.000 ft) untuk grafik angin', w / 2, h / 2);
                 return;
             }
 
-            const maxH = Math.max(...pts.map(p => p.height), 500);
+            const maxH = Math.max(...pts.map(p => p.heightFt), 2000);
             const maxSpd = Math.max(...pts.map(p => p.speedKt), 20) + 5;
 
-            // Grid lines
             ctx.strokeStyle = isDark ? '#1e293b' : '#cbd5e1';
             ctx.lineWidth = 1;
             for (let i = 0; i <= 4; i++) {
@@ -1758,25 +2031,23 @@
                 ctx.fillStyle = isDark ? '#94a3b8' : '#475569';
                 ctx.font = '10px JetBrains Mono, monospace';
                 ctx.textAlign = 'right';
-                ctx.fillText(`${hLabel}m`, padL - 6, y + 3);
+                ctx.fillText(`${hLabel}ft`, padL - 6, y + 3);
             }
 
-            // Wind speed curve
             ctx.strokeStyle = '#0ea5e9';
             ctx.lineWidth = 2.5;
             ctx.beginPath();
             pts.forEach((p, idx) => {
                 const px = padL + (p.speedKt / maxSpd) * plotW;
-                const py = padT + plotH - (p.height / maxH) * plotH;
+                const py = padT + plotH - (p.heightFt / maxH) * plotH;
                 if (idx === 0) ctx.moveTo(px, py);
                 else ctx.lineTo(px, py);
             });
             ctx.stroke();
 
-            // Data points & direction labels
             pts.forEach(p => {
                 const px = padL + (p.speedKt / maxSpd) * plotW;
-                const py = padT + plotH - (p.height / maxH) * plotH;
+                const py = padT + plotH - (p.heightFt / maxH) * plotH;
 
                 ctx.fillStyle = '#f59e0b';
                 ctx.beginPath();
@@ -1790,44 +2061,225 @@
             });
         }
 
+        function copyToClipboardSafe(text, successMsg) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(successMsg, 'success');
+                }).catch(() => {
+                    fallbackCopyText(text, successMsg);
+                });
+            } else {
+                fallbackCopyText(text, successMsg);
+            }
+        }
+
+        function fallbackCopyText(text, successMsg) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg, 'success');
+            } catch (e) {
+                showToast('Gagal menyalin teks.', 'error');
+            }
+            document.body.removeChild(ta);
+        }
+
         function copyPilotCode() {
-            const textarea = document.getElementById('pilot-code-output');
-            if (!textarea) return;
-            textarea.select();
-            document.execCommand('copy');
-            showToast('Sandi PILOT FM 32 berhasil disalin!', 'success');
+            const code = document.getElementById('pilot-code-output')?.value || '';
+            copyToClipboardSafe(code, 'Sandi PILOT (PPAA & PPBB) berhasil disalin!');
         }
 
         function shareToWhatsApp() {
-            const code = document.getElementById('pilot-code-output')?.value || '';
             const dateVal = document.getElementById('obs-date')?.value || '';
             const hourVal = document.getElementById('obs-hour')?.value || '';
-            const obsName = document.getElementById('obs-name')?.value || '';
+            const obsName = document.getElementById('obs-name')?.value || 'Observer';
+            const surfDir = document.getElementById('surface-dir')?.value || '0';
+            const surfSpd = document.getElementById('surface-spd')?.value || '0';
+            const code = document.getElementById('pilot-code-output')?.value || '';
 
-            const msg = `*LAPORAN PENGAMATAN PIBAL*\nStamet Sultan Muhammad Salahuddin Bima\nTanggal: ${dateVal} | Jam: ${hourVal} UTC\nObserver: ${obsName}\n\n\`\`\`\n${code}\n\`\`\``;
+            const azElLines = computedRows.map(r => {
+                const az = r.skipped ? '9999' : r.azimuth.toFixed(1);
+                const el = r.skipped ? '9999' : r.elevation.toFixed(1);
+                return `${String(r.minute).padStart(2, '0')}. Az: *${az}* | El: *${el}*`;
+            }).join('\n');
+
+            const msg = `*DATA PENGAMATAN PIBAL (BMKGSOFT)*\n` +
+                `Stamet Sultan Muhammad Salahuddin Bima\n` +
+                `Tanggal: ${dateVal} | Jam: ${hourVal} UTC\n` +
+                `Observer: ${obsName}\n` +
+                `Angin Permukaan: ${surfDir}° / ${surfSpd} kt\n\n` +
+                `*PEMBACAAN AZIMUTH & ELEVASI:*\n` +
+                `${azElLines || '(Belum ada data)'}\n\n` +
+                `*SANDI PILOT (PPAA & PPBB):*\n` +
+                `\`\`\`\n${code}\n\`\`\``;
+
             const waUrl = `https://wa.me/?text=${encodeURIComponent(msg)}`;
             window.open(waUrl, '_blank');
         }
 
-        function exportToCSV() {
+        async function exportToCSV() {
             const wmo = document.getElementById('obs-wmo')?.value || '97270';
             const dateStr = document.getElementById('obs-date')?.value || 'date';
             const hourStr = document.getElementById('obs-hour')?.value || '00';
+            const fileName = `PIBAL-RM_BIMA_${wmo}_${dateStr}_${hourStr}UTC.csv`;
 
-            let csv = 'Menit,Elevasi(deg),Azimuth(deg),Tinggi(m),ArahAngin(deg),Kecepatan(kt)\n';
+            let csv = 'Pembacaan,Azimuth(deg),Elevasi(deg),Level(ft),ArahAngin(deg),Kecepatan(kt),Sandi_dddff\n';
             computedRows.forEach(r => {
-                csv += `${r.minute},${r.elevation},${r.azimuth},${r.height},${r.dir},${r.speedKt}\n`;
+                const az = r.skipped ? '9999' : r.azimuth;
+                const el = r.skipped ? '9999' : r.elevation;
+                const dir = r.dir !== null ? r.dir : '';
+                const spd = r.speedKt !== null ? r.speedKt : '';
+                const dddff = r.dddff || '';
+                csv += `${r.minute},${az},${el},${r.heightFt},${dir},${spd},${dddff}\n`;
             });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `PIBAL-RM_BIMA_${wmo}_${dateStr}_${hourStr}UTC.csv`;
-            link.click();
-            showToast('File CSV berhasil diunduh.', 'success');
+
+            try {
+                const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent('\uFEFF' + csv);
+                const link = document.createElement('a');
+                link.setAttribute('href', dataUri);
+                link.setAttribute('download', fileName);
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                setTimeout(() => document.body.removeChild(link), 500);
+            } catch (e) {}
+
+            try {
+                const file = new File([csv], fileName, { type: 'text/csv' });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: fileName,
+                        files: [file]
+                    });
+                    showToast(`File ${fileName} berhasil dibagikan/disimpan.`, 'success');
+                    return;
+                }
+            } catch (err) {}
+
+            showToast(`File ${fileName} diunduh. Cek folder Download di File Manager HP.`, 'success');
+        }
+
+        function exportToPDF() {
+            const wmo = document.getElementById('obs-wmo')?.value || '97270';
+            const dateVal = document.getElementById('obs-date')?.value || '';
+            const hourVal = document.getElementById('obs-hour')?.value || '00';
+            const obsName = document.getElementById('obs-name')?.value || 'Observer';
+            const surfDir = document.getElementById('surface-dir')?.value || '0';
+            const surfSpd = document.getElementById('surface-spd')?.value || '0';
+            const code = document.getElementById('pilot-code-output')?.value || '';
+            const fileName = `LAPORAN_PIBAL_BIMA_${wmo}_${dateVal}_${hourVal}UTC.pdf`;
+
+            if (typeof html2pdf === 'undefined') {
+                window.print();
+                return;
+            }
+
+            showToast('Menyiapkan dokumen PDF...', 'info');
+
+            const rowsHtml = computedRows.map(r => `
+                <tr>
+                    <td style="border:1px solid #94a3b8;padding:4px 6px;text-align:center;">${r.minute}</td>
+                    <td style="border:1px solid #94a3b8;padding:4px 6px;text-align:center;">${r.skipped ? '9999' : r.azimuth.toFixed(1) + '°'}</td>
+                    <td style="border:1px solid #94a3b8;padding:4px 6px;text-align:center;">${r.skipped ? '9999' : r.elevation.toFixed(1) + '°'}</td>
+                    <td style="border:1px solid #94a3b8;padding:4px 6px;text-align:center;">${r.heightFt} ft</td>
+                    <td style="border:1px solid #94a3b8;padding:4px 6px;text-align:center;">${r.dir !== null ? r.dir + '°' : '-'}</td>
+                    <td style="border:1px solid #94a3b8;padding:4px 6px;text-align:center;">${r.speedKt !== null ? r.speedKt + ' kt' : '-'}</td>
+                    <td style="border:1px solid #94a3b8;padding:4px 6px;text-align:center;font-weight:bold;">${r.dddff || '-'}</td>
+                </tr>
+            `).join('');
+
+            const pdfWrapper = document.createElement('div');
+            pdfWrapper.style.padding = '16px';
+            pdfWrapper.style.background = '#ffffff';
+            pdfWrapper.style.color = '#0f172a';
+            pdfWrapper.style.fontFamily = 'Arial, sans-serif';
+            pdfWrapper.style.fontSize = '11px';
+            pdfWrapper.innerHTML = `
+                <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:8px;margin-bottom:10px;">
+                    <div style="font-size:10px;font-weight:bold;letter-spacing:1px;">BADAN METEOROLOGI, KLIMATOLOGI, DAN GEOFISIKA</div>
+                    <div style="font-size:14px;font-weight:bold;margin:2px 0;">STASIUN METEOROLOGI SULTAN MUHAMMAD SALAHUDDIN BIMA</div>
+                    <div style="font-size:9px;color:#334155;">Jl. Sultan Muhammad Salahuddin, Bandara Muhammad Salahuddin, Bima - NTB | WMO ID: ${wmo}</div>
+                </div>
+                <div style="margin-bottom:10px;display:flex;justify-content:space-between;font-size:10px;">
+                    <div>
+                        <b>Tanggal / Jam:</b> ${dateVal} / ${hourVal}:00 UTC<br>
+                        <b>Observer:</b> ${escapeHtml(obsName)}
+                    </div>
+                    <div style="text-align:right;">
+                        <b>Angin Permukaan:</b> ${surfDir}° / ${surfSpd} kt<br>
+                        <b>Alat:</b> 1 - Optical Theodolite
+                    </div>
+                </div>
+                <div style="font-weight:bold;margin-bottom:4px;">1. DATA PEMBACAAN &amp; LAPISAN ANGIN</div>
+                <table style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:10px;">
+                    <thead>
+                        <tr style="background:#e2e8f0;">
+                            <th style="border:1px solid #94a3b8;padding:5px;">No</th>
+                            <th style="border:1px solid #94a3b8;padding:5px;">Azimuth</th>
+                            <th style="border:1px solid #94a3b8;padding:5px;">Elevasi</th>
+                            <th style="border:1px solid #94a3b8;padding:5px;">Level</th>
+                            <th style="border:1px solid #94a3b8;padding:5px;">Arah</th>
+                            <th style="border:1px solid #94a3b8;padding:5px;">Kec</th>
+                            <th style="border:1px solid #94a3b8;padding:5px;">Sandi dddff</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rowsHtml}</tbody>
+                </table>
+                <div style="font-weight:bold;margin-bottom:4px;">2. SANDI PILOT (FM 32)</div>
+                <pre style="background:#f1f5f9;border:1px solid #94a3b8;padding:8px;font-family:monospace;font-size:11px;white-space:pre-wrap;">${code}</pre>
+            `;
+
+            const opt = {
+                margin: 8,
+                filename: fileName,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(pdfWrapper).save().then(() => {
+                showToast(`File ${fileName} berhasil diunduh!`, 'success');
+            }).catch(() => {
+                window.print();
+            });
+        }
+
+        // Kirim Script Auto-Input BMKGSoft langsung ke WhatsApp (+ salin ke clipboard HP)
+        function sendBMKGSoftScriptToWA() {
+            if (computedRows.length === 0) {
+                showToast('Belum ada data pembacaan untuk dikirim.', 'error');
+                return;
+            }
+
+            const pairs = computedRows.map(r => [
+                r.skipped ? '9999' : String(r.azimuth),
+                r.skipped ? '9999' : String(r.elevation)
+            ]);
+
+            const script = `(function(){const d=${JSON.stringify(pairs)};const setVal=(el,val)=>{if(!el)return;const s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;s.call(el,val);el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));};const rows=[];document.querySelectorAll('tr,.row,.grid,div').forEach(r=>{const ins=Array.from(r.querySelectorAll(':scope > td input, :scope > div input'));if(ins.length===2&&!rows.some(p=>p[0]===ins[0]))rows.push(ins);});d.forEach((v,i)=>{if(rows[i]){setVal(rows[i][0],v[0]);setVal(rows[i][1],v[1]);}});const btn=Array.from(document.querySelectorAll('button,input[type="button"],input[type="submit"]')).find(b=>(b.innerText||b.value||'').trim().toLowerCase()==='submit');if(btn)setTimeout(()=>btn.click(),300);})();`;
+
+            copyToClipboardSafe(script, 'Script disalin & membuka WhatsApp...');
+            const waUrl = `https://wa.me/?text=${encodeURIComponent(script)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        function copyAzElTabular() {
+            const lines = computedRows.map(r => {
+                const az = r.skipped ? '9999' : r.azimuth;
+                const el = r.skipped ? '9999' : r.elevation;
+                return `${r.minute}\t${az}\t${el}`;
+            }).join('\n');
+            copyToClipboardSafe(lines, 'Tabel Pembacaan, Azimuth & Elevasi berhasil disalin!');
         }
 
         // =========================================================================
-        // 11. SESSION HISTORY (LAST 3 COMPLETED OBSERVATIONS + PDF PRINT)
+        // 12. SESSION HISTORY (LAST 3 COMPLETED OBSERVATIONS + PDF)
         // =========================================================================
         function getSavedHistory() {
             try {
@@ -1841,15 +2293,12 @@
         function saveSessionToHistory() {
             try {
                 const history = getSavedHistory();
-                const now = new Date();
                 const entry = {
                     id: Date.now(),
-                    savedAt: `${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')} UTC`,
                     wmo: document.getElementById('obs-wmo').value || '97270',
                     name: document.getElementById('obs-name').value || 'Observer',
                     date: document.getElementById('obs-date').value || '',
                     hour: document.getElementById('obs-hour').value || '00',
-                    rate: STANDARD_ASCENT_RATE,
                     surfDir: document.getElementById('surface-dir').value || '0',
                     surfSpd: document.getElementById('surface-spd').value || '0',
                     readings: JSON.parse(JSON.stringify(readings)),
@@ -1880,7 +2329,7 @@
                             <span class="font-bold text-xs text-white truncate">${item.date} &bull; ${item.hour} UTC</span>
                         </div>
                         <div class="text-[10px] text-slate-400 mt-0.5 truncate">
-                            ${item.readings.length} Menit &bull; Observer: ${item.name}
+                            ${item.readings.length} Bacaan &bull; Observer: ${escapeHtml(item.name)}
                         </div>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
@@ -1888,7 +2337,7 @@
                             <i class="fa-solid fa-eye"></i>
                             <span>Buka</span>
                         </button>
-                        <button onclick="restoreHistorySession(${item.id}, true)" title="Cetak PDF Riwayat Ini" class="bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-[11px] py-2 px-2.5 rounded-xl shadow transition flex items-center gap-1">
+                        <button onclick="restoreHistorySession(${item.id}, true)" title="Unduh PDF Riwayat Ini" class="bg-amber-500 hover:bg-amber-600 text-navy-950 font-extrabold text-[11px] py-2 px-2.5 rounded-xl shadow transition flex items-center gap-1">
                             <i class="fa-solid fa-file-pdf"></i>
                             <span>PDF</span>
                         </button>
@@ -1897,7 +2346,7 @@
             `).join('');
         }
 
-        function restoreHistorySession(id, triggerPrint = false) {
+        function restoreHistorySession(id, triggerPdf = false) {
             const history = getSavedHistory();
             const item = history.find(h => h.id === id);
             if (!item) return;
@@ -1913,12 +2362,13 @@
             editingMinute = readings.length > 0 ? Math.max(...readings.map(r => r.minute)) + 1 : 1;
             isSessionCompleted = false;
 
+            renderObserverChips();
             recalculateAll();
             drawWindProfileChart();
             showToast(`Riwayat ${item.date} (${item.hour} UTC) dimuat.`, 'info');
 
-            if (triggerPrint) {
-                setTimeout(() => window.print(), 250);
+            if (triggerPdf) {
+                setTimeout(() => exportToPDF(), 250);
             }
         }
 
@@ -1927,6 +2377,7 @@
                 const state = {
                     wmo: document.getElementById('obs-wmo').value,
                     name: document.getElementById('obs-name').value,
+                    firstReadDelay: document.getElementById('first-read-delay')?.value || '90',
                     surfDir: document.getElementById('surface-dir').value,
                     surfSpd: document.getElementById('surface-spd').value,
                     readings,
@@ -1942,10 +2393,15 @@
                 if (!raw) return;
                 const state = JSON.parse(raw);
                 if (state.wmo) document.getElementById('obs-wmo').value = state.wmo;
-                if (state.name) document.getElementById('obs-name').value = state.name;
+                if (state.name) {
+                    document.getElementById('obs-name').value = state.name;
+                    recordObserverName(state.name);
+                }
+                if (state.firstReadDelay && document.getElementById('first-read-delay')) {
+                    document.getElementById('first-read-delay').value = state.firstReadDelay;
+                }
 
                 if (state.isSessionCompleted) {
-                    // Start fresh observation session automatically when reopened
                     readings = [];
                     editingMinute = 1;
                     isSessionCompleted = false;
